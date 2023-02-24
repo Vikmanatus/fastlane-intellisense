@@ -194,12 +194,12 @@ connection.onCompletion(
 		// info and always provide the same completion items.
 		return [
 			{
-				label: 'TypeScript',
+				label: 'get_version_number',
 				kind: CompletionItemKind.Text,
 				data: 1
 			},
 			{
-				label: 'JavaScript',
+				label: 'get_build_number',
 				kind: CompletionItemKind.Text,
 				data: 2
 			}
@@ -212,11 +212,11 @@ connection.onCompletion(
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
 		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
+			item.detail = 'A fastlane action to get the version number';
+			item.documentation = 'Fetches the version number';
 		} else if (item.data === 2) {
-			item.detail = 'JavaScript details';
-			item.documentation = 'JavaScript documentation';
+			item.detail = 'A fastlane action to get the version number';
+			item.documentation = 'Fetches the build number';
 		}
 		return item;
 	}
