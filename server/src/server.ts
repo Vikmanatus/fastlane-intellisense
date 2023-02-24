@@ -195,12 +195,12 @@ connection.onCompletion(
 		return [
 			{
 				label: 'get_version_number',
-				kind: CompletionItemKind.Text,
+				kind: CompletionItemKind.Function,
 				data: 1
 			},
 			{
 				label: 'get_build_number',
-				kind: CompletionItemKind.Text,
+				kind: CompletionItemKind.Function,
 				data: 2
 			}
 		];
