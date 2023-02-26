@@ -1,6 +1,6 @@
 # Fastlane-Intellisense
 
-A simple `VSCode` extension to bring intellisense for `fastlane` inside of Fastfile
+A simple [`VSCode`](https://code.visualstudio.com/) extension to bring intellisense for [`fastlane`](https://docs.fastlane.tools/) inside of Fastfile
 
 ## 📚 Ressources
 
