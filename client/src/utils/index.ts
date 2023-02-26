@@ -16,20 +16,44 @@ export function convertToClassName(functionName: string): string {
   return className;
 }
 
-export function writeJsonFile(
-  filePaths: string[],
-  outputFile: string
-): Promise<boolean> {
-  const data = JSON.stringify(filePaths, null, 2);
-  return new Promise((resolve, reject) => {
-    writeFile(outputFile, data, (err) => {
-      if (err) {
-        console.error(err);
-        return reject(false);
-      }
-      return resolve(true);
-    });
+interface Action {
+  actionName: string;
+  path: string;
+}
+
+export function parseOutput(output: string, outputPath: string): Promise<void> {
+  const regex = /.*\/(.*?)\.rb/g;
+  const matches = output.match(regex);
+  const actions = matches?.map((match) => {
+    const path = match.trim();
+    const actionName = path.split("/").pop()?.replace(".rb", "");
+    return { actionName, path };
   });
+  if (actions) {
+    const json = JSON.stringify(actions, null, 2);
+
+    return new Promise((resolve, reject) => {
+      writeFile(outputPath, json, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  } else {
+    Promise.reject(new Error("No matches found."));
+  }
+}
+
+export function fileExists(filePath: string): boolean {
+  try {
+    // Check if the file exists
+    accessSync(filePath, constants.F_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 export function runRubyScript(
@@ -46,16 +70,3 @@ export function runRubyScript(
   });
 }
 
-export function parseOutputString(outputString: string): string[] {
-  const filePaths = outputString.split("\n").filter((path) => path !== "");
-  return filePaths;
-}
-export function fileExists(filePath: string): boolean {
-  try {
-    // Check if the file exists
-    accessSync(filePath, constants.F_OK);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}

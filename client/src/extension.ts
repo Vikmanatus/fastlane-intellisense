@@ -27,9 +27,9 @@ import {
 import {
   convertToClassName,
   fileExists,
-  parseOutputString,
+  parseOutput,
   runRubyScript,
-  writeJsonFile,
+
 } from "./utils";
 
 let client: LanguageClient;
@@ -121,21 +121,23 @@ export function activate(context: ExtensionContext) {
     .then(({ stdout, stderr }) => {
       console.log(`stdout: ${stdout}`);
       console.error(`stderr: ${stderr}`);
-      const result = parseOutputString(stdout);
-      return writeJsonFile(result, "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/output.json")
-        .then((result) => {
+      return parseOutput(
+        stdout,
+        "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/output.json"
+      )
+        .then(() => {
+        // Start the client. This will also launch the server
           client.start();
           window.showInformationMessage("My extension is now active!");
         })
         .catch((err) => {
-          return;
+          return err;
         });
     })
     .catch((error) => {
       const err = error;
       console.error(`runRubyScript error: ${error}`);
     });
-  // Start the client. This will also launch the server
 }
 
 export function deactivate(): Thenable<void> | undefined {
