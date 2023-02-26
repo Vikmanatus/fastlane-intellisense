@@ -3,22 +3,19 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { accessSync, constants } from "fs";
 import * as path from "path";
 import {
   workspace,
   ExtensionContext,
   languages,
-  DocumentSymbolProvider,
   TextDocument,
   CancellationToken,
-  SymbolInformation,
-  SymbolKind,
   DefinitionProvider,
   Location,
   Position,
   Range,
   Uri,
+  window,
 } from "vscode";
 
 import {
@@ -27,31 +24,10 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
+import { convertToClassName, fileExists } from "./utils";
 
 let client: LanguageClient;
-function fileExists(filePath: string): boolean {
-  try {
-    // Check if the file exists
-    accessSync(filePath, constants.F_OK);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-function convertToClassName(functionName: string): string {
-  // split the function name into words
-  const words = functionName.split("_");
 
-  // capitalize the first letter of each word
-  const capitalizedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1)
-  );
-
-  // join the words together and add "Action" at the end
-  const className = capitalizedWords.join("") + "Action";
-
-  return className;
-}
 class GoDefinitionProvider implements DefinitionProvider {
   private findFunctionDefinition(
     document: TextDocument,
@@ -136,6 +112,7 @@ export function activate(context: ExtensionContext) {
 
   // Start the client. This will also launch the server
   client.start();
+  window.showInformationMessage("My extension is now active!");
 }
 
 export function deactivate(): Thenable<void> | undefined {
