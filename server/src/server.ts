@@ -18,7 +18,7 @@ import {
   Definition,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-
+import actions_list from "./output.json";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -202,45 +202,24 @@ connection.onDidChangeWatchedFiles((_change) => {
   connection.console.log("We received an file change event");
 });
 
-// connection.onDefinition((params )=>{
-// 	const { textDocument, position } = params;
-// 	const document = documents.get(textDocument.uri);
-// 	return null;
-// });
+
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
   (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-    return [
-      {
-        label: "get_version_number",
-        kind: CompletionItemKind.Function,
-
-        data: 1,
-      },
-      {
-        label: "get_build_number",
-        kind: CompletionItemKind.Function,
-        data: 2,
-      },
-    ];
+    // TODO: Add the list of all fastlane actions
+    // The pass parameter contains the position of the text document in
+    // which code complete got requested. For the example we ignore this
+    // info and always provide the same completion items.
+    const list = actions_list.map((element) => {
+      return { label: element.actionName, kind: CompletionItemKind.Function };
+    });
+    return list;
   }
-
-  // TODO: Add the list of all fastlane actions
-  // The pass parameter contains the position of the text document in
-  // which code complete got requested. For the example we ignore this
-  // info and always provide the same completion items.
 );
 
 // This handler resolves additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
-  if (item.data === 1) {
-    item.detail = "A fastlane action to get the version number";
-    item.documentation = "Fetches the version number";
-  } else if (item.data === 2) {
-    item.detail = "A fastlane action to get the version number";
-    item.documentation = "Fetches the build number";
-  }
   return item;
 });
 
