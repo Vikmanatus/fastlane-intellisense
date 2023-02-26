@@ -14,9 +14,10 @@ import {
 	CompletionItemKind,
 	TextDocumentPositionParams,
 	TextDocumentSyncKind,
-	InitializeResult
-} from 'vscode-languageserver/node';
+	InitializeResult,
+	Definition,
 
+} from 'vscode-languageserver/node';
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
@@ -133,6 +134,14 @@ documents.onDidClose(e => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
+});
+
+connection.onDefinition((params: TextDocumentPositionParams): Definition => {
+	const text_uri = params.textDocument.uri;
+	return {
+		uri:text_uri,
+		range: {start:{character:params.position.character,line:params.position.line},end:{character:params.position.character,line:params.position.line}}
+	};
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
