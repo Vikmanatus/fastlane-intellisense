@@ -54,13 +54,14 @@ class GoDefinitionProvider implements DefinitionProvider {
 
     const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
     const file_exists = fileExists(targetPath);
-    const targetDocument = await workspace.openTextDocument(targetPath);
-    const targetPosition = this.findFunctionDefinition(
-      targetDocument,
-      convertToClassName(text_element)
-    );
 
     if (file_exists) {
+      const targetDocument = await workspace.openTextDocument(targetPath);
+      const targetPosition = this.findFunctionDefinition(
+        targetDocument,
+        convertToClassName(text_element)
+      );
+
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),
