@@ -17,6 +17,7 @@ import {
   Location,
   Position,
   Range,
+  Uri,
 } from "vscode";
 
 import {
@@ -36,11 +37,35 @@ class GoDefinitionProvider implements DefinitionProvider {
     // const text_element = document.getText({
     //   start: { line: position.line,character:position.character },
     // } as Range);
-    const text_element = document.getText();
-    const test="hello";
-    if (text_element !== "get_version_number") {
-      return null;
+    const range = document.lineAt(position).range;
+    const text_element = document.getText(range);
+    const test = "hello";
+    const targetPath =
+      "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb";
+
+    if (text_element.trim() === "get_version_number") {
+      const tester = "success";
+      // return Promise.resolve({} as Location);
+      // return Promise.resolve({
+      //   range: { start: { line: 0 } },
+      //   uri: {
+      //     fsPath:
+      //       "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb",
+      //   },
+      // } as Location);
+      return Promise.resolve(
+        new Location(
+          Uri.file(targetPath),
+          new Range(new Position(0, 0), new Position(0, 2))
+        )
+      );
     }
+    return Promise.resolve(
+      new Location(
+        Uri.file(targetPath),
+        new Range(new Position(0, 0), new Position(0, 2))
+      )
+    );
     // return Promise.resolve({
     //   range: { start: { line: 0 } },
     //   uri: {
@@ -48,7 +73,6 @@ class GoDefinitionProvider implements DefinitionProvider {
     //       "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb",
     //   },
     // } as Location);
-    return null;
   }
 }
 export function activate(context: ExtensionContext) {
