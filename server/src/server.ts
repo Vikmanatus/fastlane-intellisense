@@ -18,6 +18,7 @@ import {
   Definition,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
+import { exec } from "child_process";
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -202,6 +203,23 @@ connection.onDidChangeWatchedFiles((_change) => {
   connection.console.log("We received an file change event");
 });
 
+
+function executeRubyScript(rubyScript: string): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    exec(`ruby ${rubyScript}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        reject(stderr);
+        return;
+      }
+      const result = stdout.trim().split("\n");
+      resolve(result);
+    });
+  });
+}
 // connection.onDefinition((params )=>{
 // 	const { textDocument, position } = params;
 // 	const document = documents.get(textDocument.uri);
@@ -209,23 +227,58 @@ connection.onDidChangeWatchedFiles((_change) => {
 // });
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
-  (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+  (
+    _textDocumentPosition: TextDocumentPositionParams
+  ): Promise<CompletionItem[]> => {
+    return executeRubyScript("/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/server/scripts/get_fastlane_actions.rb")
+      .then((result) => {
+        console.log(result);
+		const table = result;
+        return [] as unknown as CompletionItem[];
+      })
+      .catch((error) => {
+        console.error(error);
+        return [] as unknown as CompletionItem[];
+      });
+    // runRubyScript()
+    //   .then((result) => {
+    //     const tester = result;
+    //     if (result.stdout) {
+    //       const lists = result.stdout;
+    //       return [] as unknown as CompletionItem[];
+    //     }
+    //     return [] as unknown as CompletionItem[];
+    //   })
+    //   .catch((err) => {
+    //     return [] as unknown as CompletionItem[];
+    //   });
+    // runRubyScript(
+    //   "./server/scripts/get_fastlane_actions.rb",
+    //   (error, _stdout, _stderr) => {
+    //     if (error) {
+    //       console.error(`exec error: ${error}`);
+    //       return [];
+    //     }
+    //     return [
+    //       {
+    //         label: "get_version_number",
+    //         kind: CompletionItemKind.Function,
+
+    //         data: 1,
+    //       },
+    //       {
+    //         label: "get_build_number",
+    //         kind: CompletionItemKind.Function,
+    //         data: 2,
+    //       },
+    //     ];
+    //   }
+    // );
+
+    // TODO: Add the list of all fastlane actions
     // The pass parameter contains the position of the text document in
     // which code complete got requested. For the example we ignore this
     // info and always provide the same completion items.
-    return [
-      {
-        label: "get_version_number",
-        kind: CompletionItemKind.Function,
-
-        data: 1,
-      },
-      {
-        label: "get_build_number",
-        kind: CompletionItemKind.Function,
-        data: 2,
-      },
-    ];
   }
 );
 
