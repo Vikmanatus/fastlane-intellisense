@@ -24,7 +24,13 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
-import { convertToClassName, fileExists } from "./utils";
+import {
+  convertToClassName,
+  fileExists,
+  parseOutputString,
+  runRubyScript,
+  writeJsonFile,
+} from "./utils";
 
 let client: LanguageClient;
 
@@ -61,7 +67,6 @@ class GoDefinitionProvider implements DefinitionProvider {
         targetDocument,
         convertToClassName(text_element)
       );
-
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),
@@ -110,10 +115,27 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
-
+  return runRubyScript(
+    "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/client/src/scripts/get_fastlane_actions.rb"
+  )
+    .then(({ stdout, stderr }) => {
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+      const result = parseOutputString(stdout);
+      return writeJsonFile(result, "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/output.json")
+        .then((result) => {
+          client.start();
+          window.showInformationMessage("My extension is now active!");
+        })
+        .catch((err) => {
+          return;
+        });
+    })
+    .catch((error) => {
+      const err = error;
+      console.error(`runRubyScript error: ${error}`);
+    });
   // Start the client. This will also launch the server
-  client.start();
-  window.showInformationMessage("My extension is now active!");
 }
 
 export function deactivate(): Thenable<void> | undefined {
