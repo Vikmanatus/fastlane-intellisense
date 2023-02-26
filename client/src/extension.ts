@@ -72,13 +72,14 @@ class GoDefinitionProvider implements DefinitionProvider {
     position: Position,
     token: CancellationToken
   ): Promise<Location> {
+    // TODO: need to escape parenthesis inside text_element
     const range = document.lineAt(position).range;
-    const text_element = document.getText(range);
+    const text_element = document.getText(range).trim();
 
-    const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element.trim()}.rb`;
+    const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
     const file_exists = fileExists(targetPath);
     const targetDocument = await workspace.openTextDocument(targetPath);
-    const targetPosition = this.findFunctionDefinition(targetDocument,convertToClassName(text_element.trim()));
+    const targetPosition = this.findFunctionDefinition(targetDocument,convertToClassName(text_element));
 
     if (file_exists) {
       return Promise.resolve(
