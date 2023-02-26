@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import { accessSync, constants } from "fs";
 import * as path from "path";
 import {
   workspace,
@@ -28,31 +29,28 @@ import {
 } from "vscode-languageclient/node";
 
 let client: LanguageClient;
+function fileExists(filePath: string): boolean {
+  try {
+    // Check if the file exists
+    accessSync(filePath, constants.F_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 class GoDefinitionProvider implements DefinitionProvider {
   public provideDefinition(
     document: TextDocument,
     position: Position,
     token: CancellationToken
   ): Thenable<Location> {
-    // const text_element = document.getText({
-    //   start: { line: position.line,character:position.character },
-    // } as Range);
     const range = document.lineAt(position).range;
     const text_element = document.getText(range);
-    const test = "hello";
-    const targetPath =
-      "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb";
 
-    if (text_element.trim() === "get_version_number") {
-      const tester = "success";
-      // return Promise.resolve({} as Location);
-      // return Promise.resolve({
-      //   range: { start: { line: 0 } },
-      //   uri: {
-      //     fsPath:
-      //       "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb",
-      //   },
-      // } as Location);
+    const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element.trim()}.rb`;
+    const file_exists = fileExists(targetPath);
+
+    if (file_exists) {
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),
@@ -60,19 +58,7 @@ class GoDefinitionProvider implements DefinitionProvider {
         )
       );
     }
-    return Promise.resolve(
-      new Location(
-        Uri.file(targetPath),
-        new Range(new Position(0, 0), new Position(0, 2))
-      )
-    );
-    // return Promise.resolve({
-    //   range: { start: { line: 0 } },
-    //   uri: {
-    //     fsPath:
-    //       "/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/get_version_number.rb",
-    //   },
-    // } as Location);
+    return null;
   }
 }
 export function activate(context: ExtensionContext) {
