@@ -52,6 +52,7 @@ connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Incremental,
+			definitionProvider:true,
 			// Tell the client that this server supports code completion.
 			completionProvider: {
 				resolveProvider: true
@@ -186,6 +187,11 @@ connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received an file change event');
 });
 
+// connection.onDefinition((params )=>{
+// 	const { textDocument, position } = params;
+// 	const document = documents.get(textDocument.uri);
+// 	return null;
+// });
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
 	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
@@ -196,6 +202,7 @@ connection.onCompletion(
 			{
 				label: 'get_version_number',
 				kind: CompletionItemKind.Function,
+				
 				data: 1
 			},
 			{
