@@ -38,23 +38,53 @@ function fileExists(filePath: string): boolean {
     return false;
   }
 }
+function convertToClassName(functionName: string): string {
+  // split the function name into words
+  const words = functionName.split("_");
+
+  // capitalize the first letter of each word
+  const capitalizedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  );
+
+  // join the words together and add "Action" at the end
+  const className = capitalizedWords.join("") + "Action";
+
+  return className;
+}
 class GoDefinitionProvider implements DefinitionProvider {
-  public provideDefinition(
+  private findFunctionDefinition(
+    document: TextDocument,
+    actionName: string
+  ): Position {
+    const regex = new RegExp(`\\b${actionName}\\b`, "i");
+    for (let i = 0; i < document.lineCount; i++) {
+      const line = document.lineAt(i);
+      const match = line.text.match(regex);
+      if (match) {
+        return new Position(i, match.index);
+      }
+    }
+    return null;
+  }
+  public async provideDefinition(
     document: TextDocument,
     position: Position,
     token: CancellationToken
-  ): Thenable<Location> {
+  ): Promise<Location> {
     const range = document.lineAt(position).range;
     const text_element = document.getText(range);
 
     const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element.trim()}.rb`;
     const file_exists = fileExists(targetPath);
+    const targetDocument = await workspace.openTextDocument(targetPath);
+    const targetPosition = this.findFunctionDefinition(targetDocument,convertToClassName(text_element.trim()));
 
     if (file_exists) {
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),
-          new Range(new Position(0, 0), new Position(0, 2))
+          new Range(targetPosition, targetPosition)
         )
       );
     }
