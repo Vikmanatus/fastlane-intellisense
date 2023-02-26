@@ -1,28 +1,6 @@
-# LSP Example
+# Fastlane-Intellisense
 
-Heavily documented sample code for https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
-
-## Functionality
-
-This Language Server works for plain text file. It has the following language features:
-- Completions
-- Diagnostics regenerated on each file change or configuration change
-
-It also includes an End-to-End test.
-
-## Structure
-
-```
-.
-├── client // Language Client
-│   ├── src
-│   │   ├── test // End to End tests for Language Client / Server
-│   │   └── extension.ts // Language Client entry point
-├── package.json // The extension manifest.
-└── server // Language Server
-    └── src
-        └── server.ts // Language Server entry point
-```
+A simple `VSCode` extension to bring intellisense for `fastlane` inside of Fastfile
 
 ## Running the Sample
 
