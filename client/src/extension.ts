@@ -16,6 +16,7 @@ import {
   Range,
   Uri,
   window,
+  commands,
 } from "vscode";
 
 import {
@@ -29,8 +30,8 @@ import {
   fileExists,
   parseOutput,
   runRubyScript,
-
-} from "./utils";
+} from "./helpers";
+import { setupConfigCommmandHandler } from "./helpers/commands";
 
 let client: LanguageClient;
 
@@ -115,6 +116,13 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
+  const setupConfigCommand = setupConfigCommmandHandler();
+  context.subscriptions.push(
+    commands.registerCommand(
+      setupConfigCommand.command,
+      setupConfigCommand.commandHandler
+    )
+  );
   // TODO: Move this block inside of config function who will be triggered only once
   // return runRubyScript(
   //   "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/client/src/scripts/get_fastlane_actions.rb"
@@ -128,7 +136,7 @@ export function activate(context: ExtensionContext) {
   //     )
   //       .then(() => {
   //       // Start the client. This will also launch the server
-   
+
   //       })
   //       .catch((err) => {
   //         return err;
@@ -139,8 +147,8 @@ export function activate(context: ExtensionContext) {
   //     console.error(`runRubyScript error: ${error}`);
   //   });
 
-    client.start();
-    window.showInformationMessage("My extension is now active!");
+  client.start();
+  window.showInformationMessage("My extension is now active!");
 }
 
 export function deactivate(): Thenable<void> | undefined {

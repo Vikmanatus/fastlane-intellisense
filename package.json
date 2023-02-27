@@ -17,10 +17,17 @@
 		"vscode": "^1.74.0"
 	},
 	"activationEvents": [
-		"onLanguage:ruby"
+		"onLanguage:ruby",
+		"onCommand:fastlane-intellisense.setupConfig"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
+		"commands":[
+			{
+				"command": "fastlane-intellisense.setupConfig",
+				"title": "fastlane-intellisense: Setup required configuration"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",

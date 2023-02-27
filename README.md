@@ -2,6 +2,8 @@
 
 A simple [`VSCode`](https://code.visualstudio.com/) extension to bring intellisense for [`fastlane`](https://docs.fastlane.tools/) inside of Fastfile
 
+## Setup extension
+
 ## 📚 Ressources
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
