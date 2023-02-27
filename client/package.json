@@ -13,9 +13,11 @@
 		"vscode": "^1.63.0"
 	},
 	"dependencies": {
+		"dotenv": "^16.0.3",
 		"vscode-languageclient": "^7.0.0"
 	},
 	"devDependencies": {
+		"@types/dotenv": "^8.2.0",
 		"@types/vscode": "^1.63.0",
 		"@vscode/test-electron": "^2.1.2"
 	}

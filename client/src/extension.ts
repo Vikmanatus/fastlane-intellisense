@@ -32,9 +32,13 @@ import {
   runRubyScript,
 } from "./helpers";
 import { setupConfigCommmandHandler } from "./helpers/commands";
+import * as dotenv from "dotenv";
+const dotenvConfig = dotenv.config({ path: "./.env" });
 
 let client: LanguageClient;
-
+const test = process.env.CURRENT_ENV;
+console.log(dotenvConfig.error);
+console.log(test);
 class GoDefinitionProvider implements DefinitionProvider {
   private findFunctionDefinition(
     document: TextDocument,
