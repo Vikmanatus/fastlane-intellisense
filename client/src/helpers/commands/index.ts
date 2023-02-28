@@ -1,5 +1,4 @@
 import { window } from "vscode";
-import { platform } from "os";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
 export type SetupConfigHandlerType = {
@@ -9,7 +8,7 @@ export type SetupConfigHandlerType = {
 export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
   const command = "fastlane-intellisense.setupConfig";
 
-  const commandHandler = (name = "world") => {
+  const commandHandler = () => {
     const devRegex =
       /^(.*?[\\/])[a-zA-Z]:?[\\/]?[^\\/]*?[\\/]?fastlane-intellisense[\\/]/g;
     const prodRegex =
@@ -41,7 +40,6 @@ export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
             });
         })
         .catch((error) => {
-          const err = error;
           console.error(`runRubyScript error: ${error}`);
           window.showErrorMessage("Internal error");
         });
