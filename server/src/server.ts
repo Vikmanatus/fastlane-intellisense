@@ -18,7 +18,7 @@ import {
   Definition,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import actions_list from "./output.json";
+import actions_list from "./actions_list.json";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);

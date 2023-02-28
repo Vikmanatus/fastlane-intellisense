@@ -20,27 +20,18 @@ export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
         __dirname,
         "../../../src/scripts/get_fastlane_actions.rb"
       );
+      const actionsOutputPath = path.join(
+        __dirname,
+        "../../../../server/src/actions_list.json"
+      );
       return runRubyScript(scriptPath)
-        .then(({ stdout, stderr }) => {
-          console.log(`stdout: ${stdout}`);
-          console.error(`stderr: ${stderr}`);
-
-          return parseOutput(
-            stdout,
-            path.join(__dirname, "../../../../server/src/output.json")
-          )
-            .then(() => {
-              // Start the client. This will also launch the server
-              window.showInformationMessage(
-                "Actions list for autocompletion has been created"
-              );
-            })
-            .catch((_err) => {
-              window.showErrorMessage("Error while creating actions list");
-            });
+        .then((result) => parseOutput(result.stdout, actionsOutputPath))
+        .then(() => {
+          window.showInformationMessage(
+            "Actions list for autocompletion has been created"
+          );
         })
-        .catch((error) => {
-          console.error(`runRubyScript error: ${error}`);
+        .catch((_error) => {
           window.showErrorMessage("Internal error");
         });
     } else {
