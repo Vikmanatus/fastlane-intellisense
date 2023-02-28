@@ -121,29 +121,7 @@ export function activate(context: ExtensionContext) {
       setupConfigCommand.commandHandler
     )
   );
-  // TODO: Move this block inside of config function who will be triggered only once
-  // return runRubyScript(
-  //   "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/client/src/scripts/get_fastlane_actions.rb"
-  // )
-  //   .then(({ stdout, stderr }) => {
-  //     console.log(`stdout: ${stdout}`);
-  //     console.error(`stderr: ${stderr}`);
-  //     return parseOutput(
-  //       stdout,
-  //       "/Users/vikmanatus/Desktop/Projects/Open-Source/Dev-Utils/LSP/fastlane-intellisense/output.json"
-  //     )
-  //       .then(() => {
-  //       // Start the client. This will also launch the server
 
-  //       })
-  //       .catch((err) => {
-  //         return err;
-  //       });
-  //   })
-  //   .catch((error) => {
-  //     const err = error;
-  //     console.error(`runRubyScript error: ${error}`);
-  //   });
 
   client.start();
   window.showInformationMessage("My extension is now active!");
