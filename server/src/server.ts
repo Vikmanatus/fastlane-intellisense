@@ -202,7 +202,6 @@ connection.onDidChangeWatchedFiles((_change) => {
   connection.console.log("We received an file change event");
 });
 
-
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
   (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
@@ -220,6 +219,8 @@ connection.onCompletion(
 // This handler resolves additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
+  // TODO: handle documentation with opening a VSCode virtual document
+  // more information: https://code.visualstudio.com/api/extension-guides/virtual-documents
   return item;
 });
 
