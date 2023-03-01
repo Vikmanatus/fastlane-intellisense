@@ -5,12 +5,12 @@ import {
   Hover,
   HoverProvider,
   Location,
+  MarkdownString,
   Position,
   Range,
   TextDocument,
   TextDocumentContentProvider,
   Uri,
-  commands,
   workspace,
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
@@ -24,8 +24,13 @@ export class DocHoverProvider implements HoverProvider {
   ): Hover {
     const range = document.getWordRangeAtPosition(position);
     const word = document.getText(range).trim();
+    const searchCommandUri = Uri.parse(
+      `command:fastlane-intellisense.openTextDoc`
+    );
+    const contents = new MarkdownString(`[Open doc for: ${word}](${searchCommandUri})`);
+    contents.isTrusted = true;
     return {
-      contents: [{ value: word, language: "ruby" }],
+      contents: [contents],
       range,
     };
   }
