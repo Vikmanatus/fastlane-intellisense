@@ -16,7 +16,7 @@ Simply run this command, and you are ready 😃
 
 For the moment, this extension contains the following features:
 
-- Providing basic autocompletion list with all the fastlane actions available
+- Providing basic autocompletion list with all the `fastlane` actions available
 - `Go to definition` functionnality to navigate you to the `fastlane` action class file
 
 ## 📚 Ressources
