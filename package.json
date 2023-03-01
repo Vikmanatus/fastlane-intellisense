@@ -16,6 +16,9 @@
 	"engines": {
 		"vscode": "^1.74.0"
 	},
+	"capabilities": {
+		"hoverProvider" : "true"
+	},
 	"activationEvents": [
 		"onLanguage:ruby",
 		"onCommand:fastlane-intellisense.setupConfig"

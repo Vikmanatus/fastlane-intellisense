@@ -25,6 +25,7 @@ import {
 } from "./helpers/commands";
 import * as dotenv from "dotenv";
 import {
+  DocHoverProvider,
   GoDefinitionProvider,
   VirtualDocumentProvider,
 } from "./providers";
@@ -42,6 +43,12 @@ export function activate(context: ExtensionContext) {
     languages.registerDefinitionProvider(
       { scheme: "file", language: "ruby" },
       new GoDefinitionProvider()
+    )
+  );
+  context.subscriptions.push(
+    languages.registerHoverProvider(
+      { language: "ruby", scheme: "file" },
+      new DocHoverProvider()
     )
   );
   const myScheme = "fastlane-intellisense";

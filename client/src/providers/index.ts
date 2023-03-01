@@ -2,16 +2,34 @@ import {
   CancellationToken,
   DefinitionProvider,
   EventEmitter,
+  Hover,
+  HoverProvider,
   Location,
   Position,
   Range,
   TextDocument,
   TextDocumentContentProvider,
   Uri,
+  commands,
   workspace,
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
 import path = require("path");
+
+export class DocHoverProvider implements HoverProvider {
+  provideHover(
+    document: TextDocument,
+    position: Position,
+    token: CancellationToken
+  ): Hover {
+    const range = document.getWordRangeAtPosition(position);
+    const word = document.getText(range).trim();
+    return {
+      contents: [{ value: word, language: "ruby" }],
+      range,
+    };
+  }
+}
 
 export class GoDefinitionProvider implements DefinitionProvider {
   private findFunctionDefinition(
