@@ -26,6 +26,10 @@
 			{
 				"command": "fastlane-intellisense.setupConfig",
 				"title": "fastlane-intellisense: Setup required configuration"
+			},
+			{
+				"command": "fastlane-intellisense.openTextDoc",
+				"title": "fastlane-intellisense: Open text document"
 			}
 		],
 		"configuration": {

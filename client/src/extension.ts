@@ -17,6 +17,8 @@ import {
   Uri,
   window,
   commands,
+  TextDocumentContentProvider,
+  EventEmitter,
 } from "vscode";
 
 import {
@@ -32,7 +34,13 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
-
+class VirtualDocumentProvider implements TextDocumentContentProvider {
+  onDidChangeEmitter = new EventEmitter<Uri>();
+  onDidChange = this.onDidChangeEmitter.event;
+  provideTextDocumentContent() {
+    return path.join(__dirname, "./extension.ts");
+  }
+}
 class GoDefinitionProvider implements DefinitionProvider {
   private findFunctionDefinition(
     document: TextDocument,
@@ -87,6 +95,13 @@ export function activate(context: ExtensionContext) {
       new GoDefinitionProvider()
     )
   );
+  const myScheme = "fastlane-intellisense";
+  context.subscriptions.push(
+    workspace.registerTextDocumentContentProvider(
+      myScheme,
+      new VirtualDocumentProvider()
+    )
+  );
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -121,8 +136,13 @@ export function activate(context: ExtensionContext) {
       setupConfigCommand.commandHandler
     )
   );
-
-
+  context.subscriptions.push(
+    commands.registerCommand("fastlane-intellisense.openTextDoc", async () => {
+      const uri = Uri.parse('fastlane-intellisense:' + "fastlane-match-doc");
+      const doc = await workspace.openTextDocument(uri); // calls back into the provider
+      await window.showTextDocument(doc, { preview: false });
+    })
+  );
   client.start();
   window.showInformationMessage("My extension is now active!");
 }
