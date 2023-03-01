@@ -1,11 +1,12 @@
-import { window } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
-export type SetupConfigHandlerType = {
+
+export type CommandHandlerType = {
   command: string;
-  commandHandler: (name?: string) => void;
+  commandHandler: () => void;
 };
-export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
+export const setupConfigCommmandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.setupConfig";
 
   const commandHandler = () => {
@@ -39,6 +40,16 @@ export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
         "There seems to be an issue with your fastlane setup"
       );
     }
+  };
+  return { command, commandHandler };
+};
+
+export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
+  const command = "fastlane-intellisense.openTextDoc";
+  const commandHandler = async () => {
+    const uri = Uri.parse("fastlane-intellisense:" + "fastlane-match-doc");
+    const doc = await workspace.openTextDocument(uri); // calls back into the provider
+    await window.showTextDocument(doc, { preview: false });
   };
   return { command, commandHandler };
 };

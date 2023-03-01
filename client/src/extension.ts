@@ -28,7 +28,10 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 import { convertToClassName, fileExists } from "./helpers";
-import { setupConfigCommmandHandler } from "./helpers/commands";
+import {
+  setupConfigCommmandHandler,
+  setupVirtualDocumentCommandHandler,
+} from "./helpers/commands";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
@@ -130,6 +133,7 @@ export function activate(context: ExtensionContext) {
     clientOptions
   );
   const setupConfigCommand = setupConfigCommmandHandler();
+  const virtualDocCommand = setupVirtualDocumentCommandHandler();
   context.subscriptions.push(
     commands.registerCommand(
       setupConfigCommand.command,
@@ -137,11 +141,10 @@ export function activate(context: ExtensionContext) {
     )
   );
   context.subscriptions.push(
-    commands.registerCommand("fastlane-intellisense.openTextDoc", async () => {
-      const uri = Uri.parse('fastlane-intellisense:' + "fastlane-match-doc");
-      const doc = await workspace.openTextDocument(uri); // calls back into the provider
-      await window.showTextDocument(doc, { preview: false });
-    })
+    commands.registerCommand(
+      virtualDocCommand.command,
+      virtualDocCommand.commandHandler
+    )
   );
   client.start();
   window.showInformationMessage("My extension is now active!");
