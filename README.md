@@ -4,6 +4,21 @@ A simple [`VSCode`](https://code.visualstudio.com/) extension to bring intellise
 
 ## Setup extension
 
+Please open your `VSCode` command palette and search for the following command:
+
+```txt
+fastlane-intellisense: Setup required configuration
+```
+
+Simply run this command, and you are ready 😃
+
+## 💡 Features
+
+For the moment, this extension contains the following features:
+
+- Providing basic autocompletion list with all the fastlane actions available
+- `Go to definition` functionnality to navigate you to the `fastlane` action class file
+
 ## 📚 Ressources
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
