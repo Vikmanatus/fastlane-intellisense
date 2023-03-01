@@ -23,6 +23,7 @@ For the moment, this extension contains the following features:
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
 - [Programmatic Language Features](https://code.visualstudio.com/api/language-extensions/programmatic-language-features)
+- [`VSCode` Virtual Documents](https://code.visualstudio.com/api/extension-guides/virtual-documents)
 
 This project was bootstaped from the `lsp-example` [repository](https://github.com/microsoft/vscode-extension-samples/tree/main/lsp-sample).
 
