@@ -19,22 +19,22 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-import {
-  setupConfigCommmandHandler,
-  setupVirtualDocumentCommandHandler,
-} from "./helpers/commands";
 import * as dotenv from "dotenv";
 import {
   DocHoverProvider,
   GoDefinitionProvider,
   VirtualDocumentProvider,
 } from "./providers";
+import { CommandsManager } from "./logic/CommandsManager";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
+  const commandManagerInstance = new CommandsManager();
+  commandManagerInstance.init();
+
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join("server", "out", "server.js")
@@ -85,20 +85,13 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
-  const setupConfigCommand = setupConfigCommmandHandler();
-  const virtualDocCommand = setupVirtualDocumentCommandHandler();
-  context.subscriptions.push(
-    commands.registerCommand(
-      setupConfigCommand.command,
-      setupConfigCommand.commandHandler
-    )
-  );
-  context.subscriptions.push(
-    commands.registerCommand(
-      virtualDocCommand.command,
-      virtualDocCommand.commandHandler
-    )
-  );
+
+  commandManagerInstance.getCommandList().forEach((element) => {
+    context.subscriptions.push(
+      commands.registerCommand(element.command, element.commandHandler)
+    );
+  });
+
   client.start();
   window.showInformationMessage("My extension is now active!");
 }

@@ -14,7 +14,6 @@ import {
   workspace,
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
-import path = require("path");
 
 export class DocHoverProvider implements HoverProvider {
   provideHover(
