@@ -2,6 +2,7 @@ import { Uri, ViewColumn, commands, window } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
 import { CommandHandlerType } from "../../logic/CommandsManager";
+import { VirtualDocumentProvider } from '../../providers';
 
 export const setupConfigCommmandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.setupConfig";
@@ -44,7 +45,7 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
 export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.openTextDoc";
   const commandHandler = async () => {
-    const uri = Uri.parse("fastlane-intellisense:" + "fastlane-match-doc.md");
+    const uri = Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc.md");
     await commands.executeCommand(
       "markdown.showPreviewToSide",
       uri,

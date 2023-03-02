@@ -10,6 +10,7 @@ import {
   languages,
   window,
   commands,
+  Uri,
 } from "vscode";
 
 import {
@@ -51,13 +52,16 @@ export function activate(context: ExtensionContext) {
       new DocHoverProvider()
     )
   );
-  const myScheme = "fastlane-intellisense";
+  const myScheme = "fastlane-intellisense-doc";
+  const virtualDocProvider = new VirtualDocumentProvider();
   context.subscriptions.push(
-    workspace.registerTextDocumentContentProvider(
-      myScheme,
-      new VirtualDocumentProvider()
-    )
+    workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
   );
+  virtualDocProvider.onDidChange((uri) => {
+    const uriInfo = uri;
+    console.log("On did change event fired");
+  });
+  virtualDocProvider.onDidChangeEmitter.fire(Uri.parse("test-fake-uri"));
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
