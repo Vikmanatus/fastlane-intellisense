@@ -1,4 +1,4 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, ViewColumn, window, workspace } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
 
@@ -49,7 +49,10 @@ export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
   const commandHandler = async () => {
     const uri = Uri.parse("fastlane-intellisense:" + "fastlane-match-doc");
     const doc = await workspace.openTextDocument(uri); // calls back into the provider
-    await window.showTextDocument(doc, { preview: false });
+    await window.showTextDocument(doc, {
+      preview: true,
+      viewColumn: ViewColumn.Beside,
+    });
   };
   return { command, commandHandler };
 };
