@@ -14,8 +14,9 @@ import {
   workspace,
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
+import Provider from '../logic/Provider';
 
-export class DocHoverProvider implements HoverProvider {
+export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
     document: TextDocument,
     position: Position,
@@ -37,7 +38,7 @@ export class DocHoverProvider implements HoverProvider {
   }
 }
 
-export class GoDefinitionProvider implements DefinitionProvider {
+export class GoDefinitionProvider extends Provider implements DefinitionProvider {
   private findFunctionDefinition(
     document: TextDocument,
     actionName: string
@@ -80,7 +81,7 @@ export class GoDefinitionProvider implements DefinitionProvider {
     return null;
   }
 }
-export class VirtualDocumentProvider implements TextDocumentContentProvider {
+export class VirtualDocumentProvider extends Provider implements TextDocumentContentProvider {
   onDidChangeEmitter = new EventEmitter<Uri>();
   onDidChange = this.onDidChangeEmitter.event;
   provideTextDocumentContent() {

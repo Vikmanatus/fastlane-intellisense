@@ -2,16 +2,16 @@ import {
   setupConfigCommmandHandler,
   setupVirtualDocumentCommandHandler,
 } from "../helpers/commands";
+import Manager from "./Manager";
 
 export type CommandHandlerType = {
   command: string;
   commandHandler: () => void;
 };
 
-export class CommandsManager {
+export class CommandsManager extends Manager {
   public commandList: CommandHandlerType[] = [];
-
-  init() {
+  public init(): void {
     this.addCommand(setupConfigCommmandHandler());
     this.addCommand(setupVirtualDocumentCommandHandler());
   }
