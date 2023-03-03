@@ -12,10 +12,10 @@ export class CommandsManager {
   public commandList: CommandHandlerType[] = [];
 
   init() {
-    this.add(setupConfigCommmandHandler());
-    this.add(setupVirtualDocumentCommandHandler());
+    this.addCommand(setupConfigCommmandHandler());
+    this.addCommand(setupVirtualDocumentCommandHandler());
   }
-  add(item: CommandHandlerType) {
+  addCommand(item: CommandHandlerType) {
     this.commandList.push(item);
   }
   getCommandList(): CommandHandlerType[] {
