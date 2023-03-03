@@ -11,9 +11,10 @@ export type CommandHandlerType = {
 
 export class CommandsManager extends Manager {
   public commandList: CommandHandlerType[] = [];
-  public init(): void {
+  public init(): boolean {
     this.addCommand(setupConfigCommmandHandler());
     this.addCommand(setupVirtualDocumentCommandHandler());
+    return true;
   }
   addCommand(item: CommandHandlerType) {
     this.commandList.push(item);

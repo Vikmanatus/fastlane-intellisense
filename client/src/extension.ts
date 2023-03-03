@@ -35,14 +35,10 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   const commandManagerInstance = new CommandsManager();
-  commandManagerInstance.init();
-
-  // The server is implemented in node
-  const serverModule = context.asAbsolutePath(
-    path.join("server", "out", "server.js")
-  );
   const providersManager = new ProvidersManager();
   const providersList = providersManager.init();
+  commandManagerInstance.init();
+
   providersList.forEach((element) => {
     context.subscriptions.push(
       element.registerMethod(element.args, element.providerInstance)
@@ -58,6 +54,11 @@ export function activate(context: ExtensionContext) {
   //   console.log("On did change event fired");
   // });
   // virtualDocProvider.onDidChangeEmitter.fire(Uri.parse("test-fake-uri"));
+
+  // The server is implemented in node
+  const serverModule = context.asAbsolutePath(
+    path.join("server", "out", "server.js")
+  );
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
