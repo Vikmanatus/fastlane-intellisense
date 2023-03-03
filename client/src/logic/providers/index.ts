@@ -91,14 +91,19 @@ export class VirtualDocumentProvider
 {
   onDidChangeEmitter = new EventEmitter<Uri>();
   onDidChange = this.onDidChangeEmitter.event;
-  initializeEventHandlers() {
+ 
+  public initializeEventHandlers(): void {
+    console.log("inside VirtualDocumentProvider event handler init");
     this.onDidChange((uri) => {
-      //
+      const uriInfo = uri;
       console.log("Document has changed");
     });
+
   }
   provideTextDocumentContent() {
     const dummyText = "# Loading documentation...";
+
+   // this.onDidChangeEmitter.fire(Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc.md"));
     return dummyText;
   }
 }

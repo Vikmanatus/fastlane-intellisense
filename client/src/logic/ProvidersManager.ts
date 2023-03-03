@@ -20,6 +20,7 @@ class ProvidersManager {
     };
   }
   getProvider(providerName: string): ProvidersConfigMap {
+    console.log("inside getProvider");
     const instance = new this.providerClasses[providerName]();
     switch (providerName) {
       case PROVIDERS.definition.toString():
@@ -45,11 +46,17 @@ class ProvidersManager {
         };
     }
   }
-
+  private initializeEventHandlers(name:string){
+    const instance = new this.providerClasses[name]();
+    if(instance.initializeEventHandlers && typeof instance.initializeEventHandlers === "function"){
+      instance.initializeEventHandlers();
+    }
+  }
   public init(): ProvidersConfigMap[] {
     const providersInstances: ProvidersConfigMap[] = [];
     // Nothing to do for the moment
     for (const providerName in this.providerClasses) {
+      this.initializeEventHandlers(providerName);
       providersInstances.push(this.getProvider(providerName));
     }
     return providersInstances;
