@@ -3,7 +3,7 @@ import {
   DocHoverProvider,
   GoDefinitionProvider,
   VirtualDocumentProvider,
-} from "../providers";
+} from "./providers";
 
 import { PROVIDERS, ProviderClassMap, ProvidersConfigMap } from './types';
 

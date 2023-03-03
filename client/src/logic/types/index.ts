@@ -2,7 +2,7 @@ import {
   DocHoverProvider,
   GoDefinitionProvider,
   VirtualDocumentProvider,
-} from "../../providers";
+} from "../providers";
 import Provider from "../Provider";
 
 export interface ProviderClassMap {

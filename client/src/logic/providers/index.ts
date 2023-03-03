@@ -13,8 +13,8 @@ import {
   Uri,
   workspace,
 } from "vscode";
-import { convertToClassName, fileExists } from "../helpers/index";
-import Provider from '../logic/Provider';
+import { convertToClassName, fileExists } from "../../helpers/index";
+import Provider from '../Provider';
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
