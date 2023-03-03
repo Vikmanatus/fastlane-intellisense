@@ -6,7 +6,7 @@ import {
 import Provider from "../Provider";
 
 export interface ProviderClassMap {
-  [key: string]: typeof Provider;
+  [key: string]: typeof Provider<any>;
 }
 export interface ProvidersTypes {
   docHover: DocHoverProvider;

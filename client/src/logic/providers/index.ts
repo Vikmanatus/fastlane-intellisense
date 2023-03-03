@@ -1,6 +1,7 @@
 import {
   CancellationToken,
   DefinitionProvider,
+  Event,
   EventEmitter,
   Hover,
   HoverProvider,
@@ -14,7 +15,7 @@ import {
   workspace,
 } from "vscode";
 import { convertToClassName, fileExists } from "../../helpers/index";
-import Provider from '../Provider';
+import Provider from "../Provider";
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
@@ -38,7 +39,10 @@ export class DocHoverProvider extends Provider implements HoverProvider {
   }
 }
 
-export class GoDefinitionProvider extends Provider implements DefinitionProvider {
+export class GoDefinitionProvider
+  extends Provider
+  implements DefinitionProvider
+{
   private findFunctionDefinition(
     document: TextDocument,
     actionName: string
@@ -81,17 +85,20 @@ export class GoDefinitionProvider extends Provider implements DefinitionProvider
     return null;
   }
 }
-export class VirtualDocumentProvider extends Provider implements TextDocumentContentProvider {
+export class VirtualDocumentProvider
+  extends Provider<Uri>
+  implements TextDocumentContentProvider
+{
   onDidChangeEmitter = new EventEmitter<Uri>();
   onDidChange = this.onDidChangeEmitter.event;
+  initializeEventHandlers() {
+    this.onDidChange((uri) => {
+      //
+      console.log("Document has changed");
+    });
+  }
   provideTextDocumentContent() {
-    const dummyText = `
-# Lorem ipsum
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris egestas sollicitudin nibh ut mollis. Vestibulum lacinia sapien sapien, id congue massa dictum in. Vivamus viverra condimentum justo, eget lacinia metus hendrerit vitae. Pellentesque pretium blandit lacus et laoreet. Nunc in mollis est, eu eleifend mauris. Quisque ultricies dictum libero, sit amet tempor augue viverra sit amet. Mauris imperdiet, odio eget sagittis ultricies, nisl orci faucibus nisi, in eleifend nunc purus nec eros. Vivamus sit amet mattis enim. Donec sodales felis sem, ac mollis orci laoreet at. Nulla sit amet arcu finibus, pretium justo eget, malesuada ex. Quisque porttitor ipsum eget justo luctus volutpat. Maecenas at tortor at mauris rhoncus laoreet. In porttitor vulputate dolor in blandit.
-
-Sed sit amet ligula nisi. Nunc tincidunt arcu vitae efficitur pellentesque. Pellentesque condimentum hendrerit pellentesque. Nam vel tempor risus, non fringilla nulla. Proin mollis nisi eget elit aliquet posuere. Quisque eu sem dolor. Curabitur fermentum diam nisl, ac imperdiet nunc finibus eget. Nam gravida imperdiet justo. Duis varius nunc sit amet urna pulvinar dapibus. Nunc sapien nisi, molestie id odio nec, semper consequat diam. Sed purus mi, laoreet ullamcorper congue nec, dapibus vel elit. Curabitur sed eros vitae leo sodales bibendum.
-`;
+    const dummyText = "# Loading documentation...";
     return dummyText;
   }
 }
