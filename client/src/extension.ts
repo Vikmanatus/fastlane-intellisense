@@ -27,7 +27,7 @@ import {
   VirtualDocumentProvider,
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
-import ProvidersManager from './logic/ProvidersManager';
+import ProvidersManager, { PROVIDERS } from "./logic/ProvidersManager";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -43,23 +43,16 @@ export function activate(context: ExtensionContext) {
   );
   const providersManager = new ProvidersManager();
   const providersList = providersManager.init();
-  context.subscriptions.push(
-    languages.registerDefinitionProvider(
-      { scheme: "file", language: "ruby" },
-      new GoDefinitionProvider()
-    )
-  );
-  context.subscriptions.push(
-    languages.registerHoverProvider(
-      { language: "ruby", scheme: "file" },
-      new DocHoverProvider()
-    )
-  );
-  const myScheme = "fastlane-intellisense-doc";
-  const virtualDocProvider = new VirtualDocumentProvider();
-  context.subscriptions.push(
-    workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
-  );
+  providersList.forEach((element) => {
+    context.subscriptions.push(
+      element.registerMethod(element.args, element.providerInstance)
+    );
+  });
+  commandManagerInstance.getCommandList().forEach((element) => {
+    context.subscriptions.push(
+      commands.registerCommand(element.command, element.commandHandler)
+    );
+  });
   // virtualDocProvider.onDidChange((uri) => {
   //   const uriInfo = uri;
   //   console.log("On did change event fired");
@@ -92,12 +85,6 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
-
-  commandManagerInstance.getCommandList().forEach((element) => {
-    context.subscriptions.push(
-      commands.registerCommand(element.command, element.commandHandler)
-    );
-  });
 
   client.start();
   window.showInformationMessage("My extension is now active!");

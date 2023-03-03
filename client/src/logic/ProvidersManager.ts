@@ -1,3 +1,4 @@
+import { languages, workspace } from "vscode";
 import {
   DocHoverProvider,
   GoDefinitionProvider,
@@ -15,7 +16,7 @@ interface ProvidersTypes {
   virtualDoc: VirtualDocumentProvider;
 }
 
-enum PROVIDERS {
+export enum PROVIDERS {
   doc = "docHoverProvider",
   definition = "definitionProvider",
   virtualDoc = "virtualDocProvider",
@@ -35,6 +36,14 @@ export type ProvidersInstances = {
 interface OnInitMap {
   [key: string]: OnInitObject;
 }
+
+type AnyFunction = (...args: any[]) => any;
+type ProvidersConfigMap = {
+  registerMethod: AnyFunction;
+  providerKey: PROVIDERS;
+  providerInstance: Provider;
+  args?: any;
+};
 class ProvidersManager {
   static _instance?: ProvidersManager | null = null;
   private readonly providerClasses: ProviderClassMap;
@@ -46,12 +55,35 @@ class ProvidersManager {
       [PROVIDERS.virtualDoc]: VirtualDocumentProvider,
     };
   }
-  getProvider(providerName: string) {
-    return new this.providerClasses[providerName]();
+  getProvider(providerName: string): ProvidersConfigMap {
+    const instance = new this.providerClasses[providerName]();
+    switch (providerName) {
+      case PROVIDERS.definition.toString():
+        return {
+          registerMethod: languages.registerDefinitionProvider,
+          providerKey: PROVIDERS.definition,
+          providerInstance: instance,
+          args: { scheme: "file", language: "ruby" },
+        };
+      case PROVIDERS.doc.toString():
+        return {
+          registerMethod: languages.registerHoverProvider,
+          providerKey: PROVIDERS.doc,
+          providerInstance: instance,
+          args: { language: "ruby", scheme: "file" },
+        };
+      case PROVIDERS.virtualDoc.toString():
+        return {
+          registerMethod: workspace.registerTextDocumentContentProvider,
+          providerKey: PROVIDERS.virtualDoc,
+          providerInstance: instance,
+          args: "fastlane-intellisense-doc",
+        };
+    }
   }
 
-  public init(): Provider[] {
-    const providersInstances: Provider[] = [];
+  public init(): ProvidersConfigMap[] {
+    const providersInstances: ProvidersConfigMap[] = [];
     // Nothing to do for the moment
     for (const providerName in this.providerClasses) {
       providersInstances.push(this.getProvider(providerName));
