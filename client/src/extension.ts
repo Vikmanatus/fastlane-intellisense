@@ -7,10 +7,8 @@ import * as path from "path";
 import {
   workspace,
   ExtensionContext,
-  languages,
   window,
   commands,
-  Uri,
 } from "vscode";
 
 import {
@@ -21,13 +19,9 @@ import {
 } from "vscode-languageclient/node";
 
 import * as dotenv from "dotenv";
-import {
-  DocHoverProvider,
-  GoDefinitionProvider,
-  VirtualDocumentProvider,
-} from "./providers";
+
 import { CommandsManager } from "./logic/CommandsManager";
-import ProvidersManager, { PROVIDERS } from "./logic/ProvidersManager";
+import ProvidersManager from "./logic/ProvidersManager";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 

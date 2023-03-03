@@ -2,7 +2,6 @@ import { Uri, ViewColumn, commands, window } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
 import { CommandHandlerType } from "../../logic/CommandsManager";
-import { VirtualDocumentProvider } from '../../providers';
 
 export const setupConfigCommmandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.setupConfig";

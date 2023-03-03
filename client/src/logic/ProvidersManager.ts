@@ -4,46 +4,10 @@ import {
   GoDefinitionProvider,
   VirtualDocumentProvider,
 } from "../providers";
-import Manager from "./Manager";
-import Provider from "./Provider";
 
-interface ProviderClassMap {
-  [key: string]: typeof Provider;
-}
-interface ProvidersTypes {
-  docHover: DocHoverProvider;
-  definition: GoDefinitionProvider;
-  virtualDoc: VirtualDocumentProvider;
-}
+import { PROVIDERS, ProviderClassMap, ProvidersConfigMap } from './types';
 
-export enum PROVIDERS {
-  doc = "docHoverProvider",
-  definition = "definitionProvider",
-  virtualDoc = "virtualDocProvider",
-}
-interface ProviderMap {
-  [key: string]: Provider;
-}
-interface OnInitObject {
-  resolved: boolean;
-  promise?: Promise<void>;
-  resolve?: () => void;
-}
-export type ProvidersInstances = {
-  key: PROVIDERS;
-  provider: Provider;
-};
-interface OnInitMap {
-  [key: string]: OnInitObject;
-}
 
-type AnyFunction = (...args: any[]) => any;
-type ProvidersConfigMap = {
-  registerMethod: AnyFunction;
-  providerKey: PROVIDERS;
-  providerInstance: Provider;
-  args?: any;
-};
 class ProvidersManager {
   static _instance?: ProvidersManager | null = null;
   private readonly providerClasses: ProviderClassMap;
