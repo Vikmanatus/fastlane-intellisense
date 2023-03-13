@@ -90,8 +90,6 @@ export class VirtualDocumentProvider
   extends Provider
   implements TextDocumentContentProvider
 {
-  // onDidChangeEmitter = new EventEmitter<Uri>();
-  // onDidChange = this.onDidChangeEmitter.event;
   private _onDidChange = new EventEmitter<Uri>();
   private _subscriptions: Disposable;
   private _documents = new Map<string, DocumentationProvider>();
@@ -108,8 +106,10 @@ export class VirtualDocumentProvider
       }, 5000);
     });
   }
-  // Expose an event to signal changes of _virtual_ documents
-  // to the editor
+
+  /**
+   * Envent handler used to fetch the documentation of the fastlane action desired by the user
+   */
   get onDidChange() {
     return this._onDidChange.event((uri) => {
       console.log("_onDidChange event fired !");
@@ -118,24 +118,18 @@ export class VirtualDocumentProvider
       });
     }).dispose;
   }
-  provideTextDocumentContent(uri: Uri) {
-    // const document = this._documents.get(uri.toString());
-    // if (document) {
-    //   return "Loading doc";
-    // }
-    // already loaded?
-    //     const dummyText = `
-    // # Lorem ipsum
 
-    // Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris egestas sollicitudin nibh ut mollis. Vestibulum lacinia sapien sapien, id congue massa dictum in. Vivamus viverra condimentum justo, eget lacinia metus hendrerit vitae. Pellentesque pretium blandit lacus et laoreet. Nunc in mollis est, eu eleifend mauris. Quisque ultricies dictum libero, sit amet tempor augue viverra sit amet. Mauris imperdiet, odio eget sagittis ultricies, nisl orci faucibus nisi, in eleifend nunc purus nec eros. Vivamus sit amet mattis enim. Donec sodales felis sem, ac mollis orci laoreet at. Nulla sit amet arcu finibus, pretium justo eget, malesuada ex. Quisque porttitor ipsum eget justo luctus volutpat. Maecenas at tortor at mauris rhoncus laoreet. In porttitor vulputate dolor in blandit.
-
-    // Sed sit amet ligula nisi. Nunc tincidunt arcu vitae efficitur pellentesque. Pellentesque condimentum hendrerit pellentesque. Nam vel tempor risus, non fringilla nulla. Proin mollis nisi eget elit aliquet posuere. Quisque eu sem dolor. Curabitur fermentum diam nisl, ac imperdiet nunc finibus eget. Nam gravida imperdiet justo. Duis varius nunc sit amet urna pulvinar dapibus. Nunc sapien nisi, molestie id odio nec, semper consequat diam. Sed purus mi, laoreet ullamcorper congue nec, dapibus vel elit. Curabitur sed eros vitae leo sodales bibendum.
-    // `;
-    //     return dummyText;
-
-    const documentInfo = new DocumentationProvider(uri, this._onDidChange);
-    this._documents.set(uri.toString(), documentInfo);
+  /**
+   * Provide the text for the virtual document
+   * @param uri
+   * @returns A string containing a placeholder text while we fetch the documentation
+   */
+  provideTextDocumentContent(
+    uri: Uri,
+    _token: CancellationToken,
+  ) {
     console.log("going to return value");
-    return documentInfo.value;
+    this._onDidChange.fire(uri);
+    return "# Loading documentation";
   }
 }
