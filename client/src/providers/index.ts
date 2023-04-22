@@ -16,7 +16,7 @@ import {
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
 import Provider from "../logic/Provider";
-import DocumentationProvider from "./DocumentationProvider";
+// import DocumentationProvider from "./DocumentationProvider";
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
@@ -92,8 +92,8 @@ export class VirtualDocumentProvider
 {
   private _onDidChange = new EventEmitter<Uri>();
   private _subscriptions: Disposable;
-  private _documents = new Map<string, DocumentationProvider>();
-  private docContent:string;
+  // private _documents = new Map<string, DocumentationProvider>();
+  private docContent: string[];
 
   constructor() {
     super();
@@ -101,16 +101,19 @@ export class VirtualDocumentProvider
     //   const documentInfo = doc;
     //   console.log("doc closed");
     // });
+    this.docContent = [];
+    this.docContent.push("# Loading documentation");
   }
   dispose() {
     this._subscriptions.dispose();
-    this._documents.clear();
+    // this._documents.clear();
     this._onDidChange.dispose();
   }
-  pauseForThreeSeconds(): Promise<void> {
+  pauseForThreeSeconds(): Promise<string[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve();
+        this.docContent.push("Fake placeholder doc");
+        resolve(this.docContent);
       }, 5000);
     });
   }
@@ -124,7 +127,11 @@ export class VirtualDocumentProvider
       this.pauseForThreeSeconds().then(() => {
         console.log("fake promise should resolve");
         const parsedUri = uri.toString();
-        return this.provideTextDocumentContent(uri,{} as CancellationToken,"UPDATE DOC" );
+        return this.provideTextDocumentContent(
+          uri,
+          {} as CancellationToken,
+          "UPDATE DOC"
+        );
       });
     }).dispose;
   }
@@ -137,17 +144,9 @@ export class VirtualDocumentProvider
   provideTextDocumentContent(
     uri: Uri,
     _token: CancellationToken,
-    documentationInfo?:string
+    documentationInfo?: string
   ) {
     console.log("going to return value");
-    const parsedUri = uri.toString();
-    const tokenInfo = _token;
-    if(documentationInfo){
-      this.docContent += "UPDATED DOC";
-      return this.docContent;
-    }
-    this._onDidChange.fire(uri);
-    this.docContent = "# Loading documentation";
-    return this.docContent;
+    return this.docContent.join("\n");
   }
 }
