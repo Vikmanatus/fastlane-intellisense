@@ -1,4 +1,4 @@
-import { Uri, ViewColumn, commands, window } from "vscode";
+import { Uri, ViewColumn, commands, window, workspace } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
 import { CommandHandlerType } from "../../logic/CommandsManager";
@@ -45,12 +45,17 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
 export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.openTextDoc";
   const commandHandler = async () => {
-    const uri = Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc.md");
-    await commands.executeCommand(
-      "markdown.showPreviewToSide",
-      uri,
-      ViewColumn.Beside
-    );
+    const uri = Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc");
+    // await commands.executeCommand(
+    //   "markdown.showPreviewToSide",
+    //   uri,
+    //   ViewColumn.Beside
+    // );
+    const doc = await workspace.openTextDocument(uri); // calls back into the provider
+    await window.showTextDocument(doc, {
+      preview: true,
+      viewColumn: ViewColumn.Beside,
+    });
   };
   return { command, commandHandler };
 };

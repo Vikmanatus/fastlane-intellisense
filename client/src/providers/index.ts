@@ -93,7 +93,15 @@ export class VirtualDocumentProvider
   private _onDidChange = new EventEmitter<Uri>();
   private _subscriptions: Disposable;
   private _documents = new Map<string, DocumentationProvider>();
+  private docContent:string;
 
+  constructor() {
+    super();
+    // this._subscriptions = workspace.onDidChangeTextDocument(doc => {
+    //   const documentInfo = doc;
+    //   console.log("doc closed");
+    // });
+  }
   dispose() {
     this._subscriptions.dispose();
     this._documents.clear();
@@ -115,6 +123,8 @@ export class VirtualDocumentProvider
       console.log("_onDidChange event fired !");
       this.pauseForThreeSeconds().then(() => {
         console.log("fake promise should resolve");
+        const parsedUri = uri.toString();
+        return this.provideTextDocumentContent(uri,{} as CancellationToken,"UPDATE DOC" );
       });
     }).dispose;
   }
@@ -127,9 +137,17 @@ export class VirtualDocumentProvider
   provideTextDocumentContent(
     uri: Uri,
     _token: CancellationToken,
+    documentationInfo?:string
   ) {
     console.log("going to return value");
+    const parsedUri = uri.toString();
+    const tokenInfo = _token;
+    if(documentationInfo){
+      this.docContent += "UPDATED DOC";
+      return this.docContent;
+    }
     this._onDidChange.fire(uri);
-    return "# Loading documentation";
+    this.docContent = "# Loading documentation";
+    return this.docContent;
   }
 }
