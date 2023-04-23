@@ -46,16 +46,11 @@ export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.openTextDoc";
   const commandHandler = async () => {
     const uri = Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc.md");
-    // await commands.executeCommand(
-    //   "markdown.showPreviewToSide",
-    //   uri,
-    //   ViewColumn.Beside
-    // );
-    const doc = await workspace.openTextDocument(uri); // calls back into the provider
-    await window.showTextDocument(doc, {
-      preview: true,
-      viewColumn: ViewColumn.Beside,
-    });
+    await commands.executeCommand(
+      "markdown.showPreviewToSide",
+      uri,
+      ViewColumn.Beside
+    );
   };
   return { command, commandHandler };
 };
