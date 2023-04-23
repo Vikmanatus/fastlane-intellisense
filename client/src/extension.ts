@@ -10,7 +10,6 @@ import {
   languages,
   window,
   commands,
-  Uri,
   Disposable,
 } from "vscode";
 
@@ -24,7 +23,7 @@ import {
 import * as dotenv from "dotenv";
 import {
   DocHoverProvider,
-  GoDefinitionProvider,
+  ActionDefinitionProvider,
   VirtualDocumentProvider,
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
@@ -44,7 +43,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     languages.registerDefinitionProvider(
       { scheme: "file", language: "ruby" },
-      new GoDefinitionProvider()
+      new ActionDefinitionProvider()
     )
   );
   context.subscriptions.push(
