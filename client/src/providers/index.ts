@@ -16,7 +16,7 @@ import {
 } from "vscode";
 import { convertToClassName, fileExists } from "../helpers/index";
 import Provider from "../logic/Provider";
-// import DocumentationProvider from "./DocumentationProvider";
+import DocumentationProvider from "./DocumentationProvider";
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
@@ -92,28 +92,24 @@ export class VirtualDocumentProvider
 {
   private _onDidChange = new EventEmitter<Uri>();
   private _subscriptions: Disposable;
-  // private _documents = new Map<string, DocumentationProvider>();
-  private docContent: string[];
+  private _documents = new Map<string, DocumentationProvider>();
 
   constructor() {
     super();
-    // this._subscriptions = workspace.onDidChangeTextDocument(doc => {
-    //   const documentInfo = doc;
-    //   console.log("doc closed");
-    // });
-    this.docContent = [];
-    this.docContent.push("# Loading documentation");
+    this._subscriptions = workspace.onDidCloseTextDocument((doc) => {
+      const documentInfo = doc.fileName;
+      console.log("doc closed");
+    });
   }
   dispose() {
     this._subscriptions.dispose();
     // this._documents.clear();
     this._onDidChange.dispose();
   }
-  pauseForThreeSeconds(): Promise<string[]> {
+  pauseForThreeSeconds(): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        this.docContent.push("Fake placeholder doc");
-        resolve(this.docContent);
+        resolve();
       }, 5000);
     });
   }
@@ -122,18 +118,7 @@ export class VirtualDocumentProvider
    * Envent handler used to fetch the documentation of the fastlane action desired by the user
    */
   get onDidChange() {
-    return this._onDidChange.event((uri) => {
-      console.log("_onDidChange event fired !");
-      this.pauseForThreeSeconds().then(() => {
-        console.log("fake promise should resolve");
-        const parsedUri = uri.toString();
-        return this.provideTextDocumentContent(
-          uri,
-          {} as CancellationToken,
-          "UPDATE DOC"
-        );
-      });
-    }).dispose;
+    return this._onDidChange.event;
   }
 
   /**
@@ -141,12 +126,16 @@ export class VirtualDocumentProvider
    * @param uri
    * @returns A string containing a placeholder text while we fetch the documentation
    */
-  provideTextDocumentContent(
-    uri: Uri,
-    _token: CancellationToken,
-    documentationInfo?: string
-  ) {
+  provideTextDocumentContent(uri: Uri, _token: CancellationToken) {
+    const doc = this._documents.get(uri.toString());
+    if (doc) {
+      return doc.value;
+    }
+    console.log("before setting doc");
+    const documentationDoc = new DocumentationProvider(uri, this._onDidChange);
+    console.log("setting doc");
+    this._documents.set(uri.toString(), documentationDoc);
     console.log("going to return value");
-    return this.docContent.join("\n");
+    return documentationDoc.value;
   }
 }
