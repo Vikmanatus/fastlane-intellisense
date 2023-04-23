@@ -56,13 +56,13 @@ export function fileExists(filePath: string): boolean {
   }
 }
 
-
 export function fetchFastlaneDoc(
   actionName: string
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    exec(`fastlane action ${actionName}`, (error, stdout, stderr) => {
+    exec(`fastlane action ${actionName} | sed -r "s/\x1B[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g"`, (error, stdout, stderr) => {
       if (error) {
+        console.log(error);
         reject(error);
       } else {
         resolve({ stdout, stderr });
@@ -83,4 +83,3 @@ export function runRubyScript(
     });
   });
 }
-
