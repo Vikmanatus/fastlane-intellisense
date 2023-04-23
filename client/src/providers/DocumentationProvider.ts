@@ -1,10 +1,10 @@
-import { EventEmitter, Uri } from "vscode";
+import { EventEmitter, MarkdownString, Uri } from "vscode";
 import { fetchFastlaneDoc } from "../helpers";
 
 class DocumentationProvider {
   private readonly _uri: Uri;
   private readonly _emitter: EventEmitter<Uri>;
-  private readonly _actionName:string;
+  private readonly _actionName: string;
   private _documentationContent: string[];
 
   get value() {
@@ -26,8 +26,13 @@ class DocumentationProvider {
     const documentationContent = await fetchFastlaneDoc(this._actionName);
     if (documentationContent.stdout) {
       this._documentationContent.shift();
-      this._documentationContent.push(documentationContent.stdout);
-      this._documentationContent.push("**Note**: This document has been scrapped from the official fastlane documentation");
+      const contents = new MarkdownString(documentationContent.stdout);
+      contents.isTrusted = true;
+      contents.supportHtml = true;
+      this._documentationContent.push(contents.value);
+      this._documentationContent.push(
+        "**Note**: This document has been scrapped from the official fastlane documentation"
+      );
       this._emitter.fire(this._uri);
     }
   }
