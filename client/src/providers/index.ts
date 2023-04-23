@@ -124,12 +124,8 @@ export class VirtualDocumentProvider
     if (doc) {
       return doc.value;
     }
-    console.log("before setting doc");
     const documentationDoc = new DocumentationProvider(uri, this._onDidChange);
-    console.log("setting doc");
     this._documents.set(uri.toString(), documentationDoc);
-    console.log("going to return value");
-    // this._onDidChange.fire(uri);
     return documentationDoc.value;
   }
 }

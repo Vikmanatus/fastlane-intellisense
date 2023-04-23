@@ -15,10 +15,6 @@ class DocumentationProvider {
     // The ReferencesDocument has access to the event emitter from
     // the containing provider. This allows it to signal changes
     this._emitter = emitter;
-    console.log("INISDE DocumentationProvider constructor");
-
-    // this._documentationContent.push("# Loading action documentation");
-    console.log("after pushing update to array");
     this._documentationContent = ["# Loading documentation"];
     // Start with printing a header and start resolving
     this._populate();
@@ -35,9 +31,6 @@ class DocumentationProvider {
   }
 
   private async _populate() {
-    //  await this.pauseForThreeSeconds();
-    // this._documentationContent.push("# Loading action documentation");
-    console.log("inisde populate");
     const fakeGroups = ["initDoc", "updateDoc"];
     for (const group of fakeGroups) {
       await this.pauseForThreeSeconds(group);
