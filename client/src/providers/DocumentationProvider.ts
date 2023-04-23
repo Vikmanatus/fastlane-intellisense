@@ -23,11 +23,14 @@ class DocumentationProvider {
     // Start with printing a header and start resolving
     this._populate();
   }
-  pauseForThreeSeconds(): Promise<void> {
+  pauseForThreeSeconds(rule?: string): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
+        if (rule === "updateDoc") {
+          this._documentationContent.push("FAKE PLACEHOLDER DOCUMENT");
+        }
         resolve();
-      }, 5000);
+      }, 1000);
     });
   }
 
@@ -35,7 +38,11 @@ class DocumentationProvider {
     //  await this.pauseForThreeSeconds();
     // this._documentationContent.push("# Loading action documentation");
     console.log("inisde populate");
-    this._emitter.fire(this._uri);
+    const fakeGroups = ["initDoc", "updateDoc"];
+    for (const group of fakeGroups) {
+      await this.pauseForThreeSeconds(group);
+      this._emitter.fire(this._uri);
+    }
   }
 }
 export default DocumentationProvider;

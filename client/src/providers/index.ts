@@ -111,11 +111,7 @@ export class VirtualDocumentProvider
    * Envent handler used to fetch the documentation of the fastlane action desired by the user
    */
   get onDidChange() {
-    return this._onDidChange.event((uri) => {
-      const uriInfo = uri;
-      console.log("ISEDE ON DID CHZANGE");
-      // this.provideTextDocumentContent(uri, {} as CancellationToken);
-    }).dispose;
+    return this._onDidChange.event;
   }
 
   /**
