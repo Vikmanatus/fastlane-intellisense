@@ -2,6 +2,7 @@ import axios from "axios";
 import { exec } from "child_process";
 import { accessSync, constants, writeFile } from "fs";
 import { parse } from "node-html-parser";
+import path = require('path');
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -59,41 +60,61 @@ export function fileExists(filePath: string): boolean {
 }
 
 export function fetchFastlaneDoc(
-  actionName: string
-): Promise<string | boolean> {
-  return new Promise((resolve, reject) => {
-    const url = "https://docs.fastlane.tools/actions/swiftlint/";
-    axios
-      .get(url, { maxBodyLength: Infinity })
-      .then((response) => {
-        if (response.status === 200) {
-          // Parse the HTML content using node-html-parser
-          // const root = parse(response.data);
-          resolve(response.data);
-
-          // Find the div with the class "section"
-          // const sectionDiv = root.querySelector("div.section");
-          // resolve(sectionDiv.toString());
-          // Extract and print the content
-          // if (sectionDiv) {
-          //   // Remove comments
-          //   sectionDiv.childNodes = sectionDiv.childNodes.filter(
-          //     (node) => node.nodeType !== 8
-          //   );
-
-          //   const content = sectionDiv.toString();
-          //   resolve(content);
-          // } else {
-          //   reject(false);
-          // }
-        } else {
-          reject(false);
-        }
-      })
-      .catch((error) => {
-        reject(`Error fetching the page: ${error.message}`);
-      });
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    const scriptPath = path.join(
+      __dirname,
+      "../../src/scripts/scrap_action.py"
+    );
+    exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
   });
+  // return new Promise((resolve, reject) => {
+  //   const url = "https://docs.fastlane.tools/actions/swiftlint/";
+  //   axios
+  //     .get(url, { maxBodyLength: Infinity })
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         // Parse the HTML content using node-html-parser
+  //         const root = parse(response.data, {
+  //           comment: false,
+  //           voidTag:{
+  //             tags:["head"]
+  //           },
+  //           blockTextElements: {
+  //             noscript: true,
+  //           },
+  //         });
+  //         resolve(root.toString());
+
+  //         // Find the div with the class "section"
+  //         // const sectionDiv = root.querySelector("div.section");
+  //         // resolve(sectionDiv.toString());
+  //         // Extract and print the content
+  //         // if (sectionDiv) {
+  //         //   // Remove comments
+  //         //   sectionDiv.childNodes = sectionDiv.childNodes.filter(
+  //         //     (node) => node.nodeType !== 8
+  //         //   );
+
+  //         //   const content = sectionDiv.toString();
+  //         //   resolve(content);
+  //         // } else {
+  //         //   reject(false);
+  //         // }
+  //       } else {
+  //         reject(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       reject(`Error fetching the page: ${error.message}`);
+  //     });
+  // });
 }
 export function runRubyScript(
   scriptPath: string
