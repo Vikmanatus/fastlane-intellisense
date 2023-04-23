@@ -1,5 +1,5 @@
 import { EventEmitter, Uri } from "vscode";
-import { fetchFastlaneDoc } from '../helpers';
+import { fetchFastlaneDoc } from "../helpers";
 
 class DocumentationProvider {
   private readonly _uri: Uri;
@@ -34,10 +34,12 @@ class DocumentationProvider {
     // Temporarilly faking asynchronous operation
     // await this.pauseForThreeSeconds("updateDoc");
     const documentationContent = await fetchFastlaneDoc("match");
-    if(documentationContent.stdout){
+    if (documentationContent.stdout) {
+      console.log(documentationContent.stdout);
+      this._documentationContent.push("```log");
       this._documentationContent.push(documentationContent.stdout);
+      this._documentationContent.push("```");
       this._emitter.fire(this._uri);
-
     }
   }
 }
