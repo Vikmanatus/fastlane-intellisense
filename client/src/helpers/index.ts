@@ -56,6 +56,20 @@ export function fileExists(filePath: string): boolean {
   }
 }
 
+
+export function fetchFastlaneDoc(
+  actionName: string
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    exec(`fastlane action ${actionName}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+  });
+}
 export function runRubyScript(
   scriptPath: string
 ): Promise<{ stdout: string; stderr: string }> {
