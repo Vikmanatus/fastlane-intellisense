@@ -34,11 +34,8 @@ class DocumentationProvider {
     // Temporarilly faking asynchronous operation
     // await this.pauseForThreeSeconds("updateDoc");
     const documentationContent = await fetchFastlaneDoc("match");
-    if (documentationContent.stdout) {
-      console.log(documentationContent.stdout);
-      this._documentationContent.push("```log");
-      this._documentationContent.push(documentationContent.stdout);
-      this._documentationContent.push("```");
+    if (typeof documentationContent !== "boolean") {
+      this._documentationContent.push(documentationContent);
       this._emitter.fire(this._uri);
     }
   }

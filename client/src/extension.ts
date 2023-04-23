@@ -72,7 +72,6 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.ipc,
     },
   };
-
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
