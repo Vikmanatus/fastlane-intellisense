@@ -20,9 +20,11 @@ def scrap_action():
 
         # Extract and print the content
         if section_div:
-            # Remove comments
-            # for comment in section_div.find_all(text=lambda text: isinstance(text, Comment)):
-            # 	comment.extract()
+            # Remove img tags with local assets
+            for img in section_div.find_all('img'):
+                src = img.get('src', '')
+                if not src.startswith('https'):
+                    img.extract()
 
             content = section_div.prettify()
             print(content)

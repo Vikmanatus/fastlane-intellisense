@@ -1,6 +1,5 @@
 import {
   CancellationToken,
-  Hover,
   HoverProvider,
   MarkdownString,
   Position,
@@ -13,7 +12,7 @@ export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
     document: TextDocument,
     position: Position,
-    token: CancellationToken
+    _token: CancellationToken
   ) {
     const range = document.getWordRangeAtPosition(position);
     const word = document.getText(range).trim();
