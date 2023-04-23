@@ -16,6 +16,9 @@
 	"engines": {
 		"vscode": "^1.74.0"
 	},
+	"capabilities": {
+		"hoverProvider" : "true"
+	},
 	"activationEvents": [
 		"onLanguage:ruby",
 		"onCommand:fastlane-intellisense.setupConfig"
@@ -26,6 +29,10 @@
 			{
 				"command": "fastlane-intellisense.setupConfig",
 				"title": "fastlane-intellisense: Setup required configuration"
+			},
+			{
+				"command": "fastlane-intellisense.openTextDoc",
+				"title": "fastlane-intellisense: Open text document"
 			}
 		],
 		"configuration": {

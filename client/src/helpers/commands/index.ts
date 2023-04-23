@@ -1,11 +1,10 @@
-import { window } from "vscode";
+import { Uri, ViewColumn, commands, window, workspace } from "vscode";
 import path = require("path");
 import { parseOutput, runRubyScript } from "../index";
-export type SetupConfigHandlerType = {
-  command: string;
-  commandHandler: (name?: string) => void;
-};
-export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
+import { CommandHandlerType } from "../../logic/CommandsManager";
+import { VirtualDocumentProvider } from '../../providers';
+
+export const setupConfigCommmandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.setupConfig";
 
   const commandHandler = () => {
@@ -39,6 +38,24 @@ export const setupConfigCommmandHandler = (): SetupConfigHandlerType => {
         "There seems to be an issue with your fastlane setup"
       );
     }
+  };
+  return { command, commandHandler };
+};
+
+export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
+  const command = "fastlane-intellisense.openTextDoc";
+  const commandHandler = async () => {
+    const uri = Uri.parse("fastlane-intellisense-doc:" + "fastlane-action-doc");
+    // await commands.executeCommand(
+    //   "markdown.showPreviewToSide",
+    //   uri,
+    //   ViewColumn.Beside
+    // );
+    const doc = await workspace.openTextDocument(uri); // calls back into the provider
+    await window.showTextDocument(doc, {
+      preview: true,
+      viewColumn: ViewColumn.Beside,
+    });
   };
   return { command, commandHandler };
 };

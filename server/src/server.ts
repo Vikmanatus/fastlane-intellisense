@@ -16,9 +16,11 @@ import {
   TextDocumentSyncKind,
   InitializeResult,
   Definition,
+  MarkupKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import actions_list from "./actions_list.json";
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -221,7 +223,11 @@ connection.onCompletion(
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
   // TODO: handle documentation with opening a VSCode virtual document
   // more information: https://code.visualstudio.com/api/extension-guides/virtual-documents
-  return item;
+  return {
+    ...item,
+    detail: item.label,
+    documentation: {kind: MarkupKind.Markdown, value:`Test`,},
+  };
 });
 
 // Make the text document manager listen on the connection

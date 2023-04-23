@@ -8,15 +8,10 @@ import {
   workspace,
   ExtensionContext,
   languages,
-  TextDocument,
-  CancellationToken,
-  DefinitionProvider,
-  Location,
-  Position,
-  Range,
-  Uri,
   window,
   commands,
+  Uri,
+  Disposable,
 } from "vscode";
 
 import {
@@ -25,58 +20,23 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
-import { convertToClassName, fileExists } from "./helpers";
-import { setupConfigCommmandHandler } from "./helpers/commands";
+
 import * as dotenv from "dotenv";
+import {
+  DocHoverProvider,
+  GoDefinitionProvider,
+  VirtualDocumentProvider,
+} from "./providers";
+import { CommandsManager } from "./logic/CommandsManager";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
 
-class GoDefinitionProvider implements DefinitionProvider {
-  private findFunctionDefinition(
-    document: TextDocument,
-    actionName: string
-  ): Position {
-    const regex = new RegExp(`\\b${actionName}\\b`, "i");
-    for (let i = 0; i < document.lineCount; i++) {
-      const line = document.lineAt(i);
-      const match = line.text.match(regex);
-      if (match) {
-        return new Position(i, match.index);
-      }
-    }
-    return null;
-  }
-  public async provideDefinition(
-    document: TextDocument,
-    position: Position,
-    token: CancellationToken
-  ): Promise<Location> {
-    // TODO: need to escape parenthesis inside text_element
-    const range = document.lineAt(position).range;
-    const text_element = document.getText(range).trim();
-
-    const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
-    const file_exists = fileExists(targetPath);
-
-    if (file_exists) {
-      const targetDocument = await workspace.openTextDocument(targetPath);
-      const targetPosition = this.findFunctionDefinition(
-        targetDocument,
-        convertToClassName(text_element)
-      );
-      return Promise.resolve(
-        new Location(
-          Uri.file(targetPath),
-          new Range(targetPosition, targetPosition)
-        )
-      );
-    }
-    return null;
-  }
-}
 export function activate(context: ExtensionContext) {
+  const commandManagerInstance = new CommandsManager();
+  commandManagerInstance.init();
+
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join("server", "out", "server.js")
@@ -87,6 +47,26 @@ export function activate(context: ExtensionContext) {
       new GoDefinitionProvider()
     )
   );
+  context.subscriptions.push(
+    languages.registerHoverProvider(
+      { language: "ruby", scheme: "file" },
+      new DocHoverProvider()
+    )
+  );
+  const myScheme = "fastlane-intellisense-doc";
+  const virtualDocProvider = new VirtualDocumentProvider();
+  // context.subscriptions.push(
+  //   workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
+  // );
+  const virtualProviderRegistration = Disposable.from(
+    workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
+  );
+  context.subscriptions.push(virtualDocProvider,virtualProviderRegistration);
+  // virtualDocProvider.onDidChange((uri) => {
+  //   const uriInfo = uri;
+  //   console.log("On did change event fired");
+  // });
+  // virtualDocProvider.onDidChangeEmitter.fire(Uri.parse("test-fake-uri"));
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -114,14 +94,12 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
-  const setupConfigCommand = setupConfigCommmandHandler();
-  context.subscriptions.push(
-    commands.registerCommand(
-      setupConfigCommand.command,
-      setupConfigCommand.commandHandler
-    )
-  );
 
+  commandManagerInstance.getCommandList().forEach((element) => {
+    context.subscriptions.push(
+      commands.registerCommand(element.command, element.commandHandler)
+    );
+  });
 
   client.start();
   window.showInformationMessage("My extension is now active!");
