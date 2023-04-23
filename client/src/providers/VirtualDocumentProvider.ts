@@ -13,14 +13,14 @@ class VirtualDocumentProvider
   extends Provider
   implements TextDocumentContentProvider
 {
+  static scheme = "fastlane-intellisense-doc";
   private _onDidChange = new EventEmitter<Uri>();
   private _subscriptions: Disposable;
   private _documents = new Map<string, DocumentationProvider>();
 
   constructor() {
     super();
-    this._subscriptions = workspace.onDidCloseTextDocument((doc) => {
-      const documentInfo = doc.fileName;
+    this._subscriptions = workspace.onDidCloseTextDocument((_doc) => {
       console.log("doc closed");
     });
   }
