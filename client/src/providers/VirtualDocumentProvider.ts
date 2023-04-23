@@ -47,7 +47,7 @@ class VirtualDocumentProvider
     if (doc) {
       return doc.value;
     }
-    const documentationDoc = new DocumentationProvider(uri, this._onDidChange);
+    const documentationDoc = new DocumentationProvider(uri, this._onDidChange, uri.query);
     this._documents.set(uri.toString(), documentationDoc);
     return documentationDoc.value;
   }
