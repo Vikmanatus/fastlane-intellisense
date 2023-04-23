@@ -226,7 +226,7 @@ connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
   return {
     ...item,
     detail: item.label,
-    documentation: {kind: MarkupKind.Markdown, value:`Test`,},
+    documentation: { kind: MarkupKind.Markdown, value: `Test` },
   };
 });
 

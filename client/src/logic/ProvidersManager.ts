@@ -1,6 +1,6 @@
 import {
   DocHoverProvider,
-  GoDefinitionProvider,
+  ActionDefinitionProvider,
   VirtualDocumentProvider,
 } from "../providers";
 import Manager from "./Manager";
@@ -11,7 +11,7 @@ interface ProviderClassMap {
 }
 interface ProvidersTypes {
   docHover: DocHoverProvider;
-  definition: GoDefinitionProvider;
+  definition: ActionDefinitionProvider;
   virtualDoc: VirtualDocumentProvider;
 }
 
@@ -37,7 +37,7 @@ class ProvidersManager {
   private readonly providerClasses: ProviderClassMap;
   constructor() {
     this.providerClasses = {
-      [PROVIDERS.definition]:GoDefinitionProvider,
+      [PROVIDERS.definition]:ActionDefinitionProvider,
 
     };
   }

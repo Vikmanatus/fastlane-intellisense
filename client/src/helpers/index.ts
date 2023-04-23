@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import { accessSync, constants, writeFile } from "fs";
+import path = require("path");
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -56,6 +57,23 @@ export function fileExists(filePath: string): boolean {
   }
 }
 
+export function fetchFastlaneDoc(
+  actionName: string
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    const scriptPath = path.join(
+      __dirname,
+      "../../src/scripts/scrap_action.py"
+    );
+    exec(`python3 ${scriptPath} ${actionName}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+  });
+}
 export function runRubyScript(
   scriptPath: string
 ): Promise<{ stdout: string; stderr: string }> {
@@ -69,4 +87,3 @@ export function runRubyScript(
     });
   });
 }
-

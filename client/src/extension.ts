@@ -10,7 +10,6 @@ import {
   languages,
   window,
   commands,
-  Uri,
   Disposable,
 } from "vscode";
 
@@ -24,7 +23,7 @@ import {
 import * as dotenv from "dotenv";
 import {
   DocHoverProvider,
-  GoDefinitionProvider,
+  ActionDefinitionProvider,
   VirtualDocumentProvider,
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
@@ -44,7 +43,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     languages.registerDefinitionProvider(
       { scheme: "file", language: "ruby" },
-      new GoDefinitionProvider()
+      new ActionDefinitionProvider()
     )
   );
   context.subscriptions.push(
@@ -53,20 +52,17 @@ export function activate(context: ExtensionContext) {
       new DocHoverProvider()
     )
   );
-  const myScheme = "fastlane-intellisense-doc";
+
   const virtualDocProvider = new VirtualDocumentProvider();
-  // context.subscriptions.push(
-  //   workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
-  // );
+
   const virtualProviderRegistration = Disposable.from(
-    workspace.registerTextDocumentContentProvider(myScheme, virtualDocProvider)
+    workspace.registerTextDocumentContentProvider(
+      VirtualDocumentProvider.scheme,
+      virtualDocProvider
+    )
   );
-  context.subscriptions.push(virtualDocProvider,virtualProviderRegistration);
-  // virtualDocProvider.onDidChange((uri) => {
-  //   const uriInfo = uri;
-  //   console.log("On did change event fired");
-  // });
-  // virtualDocProvider.onDidChangeEmitter.fire(Uri.parse("test-fake-uri"));
+  context.subscriptions.push(virtualDocProvider, virtualProviderRegistration);
+
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -76,7 +72,6 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.ipc,
     },
   };
-
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
