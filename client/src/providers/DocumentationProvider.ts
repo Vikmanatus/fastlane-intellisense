@@ -26,7 +26,7 @@ class DocumentationProvider {
           this._documentationContent.push("FAKE PLACEHOLDER DOCUMENT");
         }
         resolve();
-      }, 1000);
+      }, 3000);
     });
   }
 
