@@ -18,7 +18,7 @@ For the moment, this extension contains the following features:
 
 - Providing basic autocompletion list with all the `fastlane` actions available
 - `Go to definition` functionnality to navigate you to the `fastlane` action class file
-
+- Documentation for each action loading in `VSCode Virtual Document`
 ## 📚 Ressources
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
