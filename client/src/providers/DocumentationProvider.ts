@@ -23,9 +23,16 @@ class DocumentationProvider {
     // Start with printing a header and start resolving
     this._populate();
   }
+  pauseForThreeSeconds(): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 5000);
+    });
+  }
 
-  private _populate() {
-    // await this._fetchAndFormatLocations(uri, ranges);
+  private async _populate() {
+    //  await this.pauseForThreeSeconds();
     // this._documentationContent.push("# Loading action documentation");
     console.log("inisde populate");
     this._emitter.fire(this._uri);

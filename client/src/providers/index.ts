@@ -106,19 +106,16 @@ export class VirtualDocumentProvider
     // this._documents.clear();
     this._onDidChange.dispose();
   }
-  pauseForThreeSeconds(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 5000);
-    });
-  }
 
   /**
    * Envent handler used to fetch the documentation of the fastlane action desired by the user
    */
   get onDidChange() {
-    return this._onDidChange.event;
+    return this._onDidChange.event((uri) => {
+      const uriInfo = uri;
+      console.log("ISEDE ON DID CHZANGE");
+      // this.provideTextDocumentContent(uri, {} as CancellationToken);
+    }).dispose;
   }
 
   /**
@@ -136,6 +133,7 @@ export class VirtualDocumentProvider
     console.log("setting doc");
     this._documents.set(uri.toString(), documentationDoc);
     console.log("going to return value");
+    // this._onDidChange.fire(uri);
     return documentationDoc.value;
   }
 }
