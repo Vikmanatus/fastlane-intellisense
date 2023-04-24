@@ -30,7 +30,8 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
             "Actions list for autocompletion has been created"
           );
         })
-        .catch((_error) => {
+        .catch((error) => {
+          console.log({error});
           window.showErrorMessage("Internal error");
         });
     } else {

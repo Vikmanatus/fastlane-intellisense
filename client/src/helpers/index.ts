@@ -23,18 +23,31 @@ interface Action {
 }
 
 export function parseOutput(output: string, outputPath: string): Promise<void> {
-  const regex = /.*\/(.*?)\.rb/g;
-  const matches = output.match(regex);
-  const actions = matches?.map((match) => {
-    const path = match.trim();
-    const actionName = path.split("/").pop()?.replace(".rb", "");
-    return { actionName, path };
-  });
-  if (actions) {
-    const json = JSON.stringify(actions, null, 2);
+  // const regex = /.*\/(.*?)\.rb/g;
+  // const matches = output.match(regex);
+  // const actions = matches?.map((match) => {
+  //   const path = match.trim();
+  //   const actionName = path.split("/").pop()?.replace(".rb", "");
+  //   return { actionName, path };
+  // });
+  // if (actions) {
+  //   const json = JSON.stringify(actions, null, 2);
 
-    return new Promise((resolve, reject) => {
-      writeFile(outputPath, json, (err) => {
+  //   return new Promise((resolve, reject) => {
+  //     writeFile(outputPath, json, (err) => {
+  //       if (err) {
+  //         reject(err);
+  //       } else {
+  //         resolve();
+  //       }
+  //     });
+  //   });
+  // } else {
+  //   Promise.reject(new Error("No matches found."));
+  // }
+  console.log("inside parse output");
+   return new Promise((resolve, reject) => {
+      writeFile(outputPath, output, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -42,9 +55,6 @@ export function parseOutput(output: string, outputPath: string): Promise<void> {
         }
       });
     });
-  } else {
-    Promise.reject(new Error("No matches found."));
-  }
 }
 
 export function fileExists(filePath: string): boolean {
