@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'fastlane'
-require 'json'
+# require 'json'
 
 
 def config_item_to_hash(config_item)
@@ -22,9 +22,9 @@ def generate_file_paths_list
   end
 end
 
-def write_to_json_file(file_path, data)
-  File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
-end
+# def write_to_json_file(file_path, data)
+#   File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
+# end
 
 file_paths_list = generate_file_paths_list
 
@@ -112,4 +112,4 @@ merged_list = merged_hash.values
 
 # write_to_json_file('./merged.json', merged_list)
 
-puts "#{JSON.pretty_generate(merged_list)}"
+puts "#{merged_list}"

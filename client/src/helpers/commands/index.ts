@@ -31,7 +31,7 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
           );
         })
         .catch((error) => {
-          console.log({error});
+          console.log({error: error.message});
           window.showErrorMessage("Internal error");
         });
     } else {
