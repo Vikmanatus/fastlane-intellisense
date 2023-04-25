@@ -212,7 +212,7 @@ connection.onCompletion(
     // which code complete got requested. For the example we ignore this
     // info and always provide the same completion items.
     const list = actions_list.map((element) => {
-      return { label: element.actionName, kind: CompletionItemKind.Function };
+      return { label: element.action_name, kind: CompletionItemKind.Function };
     });
     return list;
   }

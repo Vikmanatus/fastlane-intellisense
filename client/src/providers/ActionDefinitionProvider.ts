@@ -34,7 +34,7 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     // TODO: need to escape parenthesis inside text_element
     const range = document.lineAt(position).range;
     const text_element = document.getText(range).trim();
-
+    // TODO: Fix path handling with path provided in actions list
     const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
     const file_exists = fileExists(targetPath);
 
