@@ -9,6 +9,6 @@
 		"resolveJsonModule":true,
 		"esModuleInterop":true
 	},
-	"include": ["src", "../shared"],
+	"include": ["src", "../shared", "./scripts"],
 	"exclude": ["node_modules", ".vscode-test"]
 }
