@@ -23,17 +23,24 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
         __dirname,
         "../../../../server/src/actions_list.json"
       );
-      return runRubyScript(scriptPath)
-        .then((result) => parseOutput(result.stdout, actionsOutputPath))
-        .then(() => {
-          window.showInformationMessage(
-            "Actions list for autocompletion has been created"
-          );
-        })
-        .catch((error) => {
-          console.log({error: error.message});
-          window.showErrorMessage("Internal error");
-        });
+      const terminal = window.createTerminal('Run Ruby Script');
+
+      // Send the command to run the Ruby script
+      terminal.sendText(`ruby ${scriptPath}`);
+  
+      // Show the terminal
+      terminal.show();
+      // return runRubyScript(scriptPath)
+      //   .then((result) => parseOutput(result.stdout, actionsOutputPath))
+      //   .then(() => {
+      //     window.showInformationMessage(
+      //       "Actions list for autocompletion has been created"
+      //     );
+      //   })
+      //   .catch((error) => {
+      //     console.log({error: error.message});
+      //     window.showErrorMessage("Internal error");
+      //   });
     } else {
       window.showErrorMessage(
         "There seems to be an issue with your fastlane setup"

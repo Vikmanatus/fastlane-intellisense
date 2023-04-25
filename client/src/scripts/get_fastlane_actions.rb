@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'fastlane'
-# require 'json'
+require 'json'
 
 
 def config_item_to_hash(config_item)
@@ -22,9 +22,9 @@ def generate_file_paths_list
   end
 end
 
-# def write_to_json_file(file_path, data)
-#   File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
-# end
+def write_to_json_file(file_path, data)
+  File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
+end
 
 file_paths_list = generate_file_paths_list
 
@@ -49,7 +49,7 @@ list.each do |element|
           if config_item.is_a?(FastlaneCore::ConfigItem)
             config_item_to_hash(config_item)
           else
-            #puts "ACTION #{action_name} HAS INVALID CONFIG ITEM: #{config_item}"
+            puts "ACTION #{action_name} HAS INVALID CONFIG ITEM: #{config_item}"
             if config_item.is_a?(Array) && config_item.length == 2
               {
                 key: config_item[0],
@@ -65,23 +65,23 @@ list.each do |element|
         end
         completion_list.append({ 'action_name' => action_name, 'args' => hash_list })
       else
-        #puts "INVALID INSTANCE: #{action_name}"
+        puts "INVALID INSTANCE: #{action_name}"
         completion_list.append({ 'action_name' => action_name, 'args' => nil })
       end
     rescue NameError => e
       invalid_action_number += 1
-      #puts "Skipping #{instance.to_s} due to an issue with uninitialized constants: #{e.message}"
+      puts "Skipping #{instance.to_s} due to an issue with uninitialized constants: #{e.message}"
       completion_list.append({ 'action_name' => action_name, 'args' => nil })
     end
   else
     invalid_action_number += 1
-    #puts "NOT AN INSTANCE #{action_name}"
+    puts "NOT AN INSTANCE #{action_name}"
   end
 end
 
-# puts "TOTAL ACTIONS: #{list.length}"
-#puts "VALID INSTANCES: #{valid_action_number}"
-#puts "INVALID INSTANCES: #{invalid_action_number}"
+puts "TOTAL ACTIONS: #{list.length}"
+puts "VALID INSTANCES: #{valid_action_number}"
+puts "INVALID INSTANCES: #{invalid_action_number}"
 
 
 # write_to_json_file('./temp.json', completion_list)
@@ -110,6 +110,5 @@ merged_hash.delete_if { |action_name, _| !completion_list.any? { |el| el["action
 # Convert the merged_hash back into an array
 merged_list = merged_hash.values
 
-# write_to_json_file('./merged.json', merged_list)
+write_to_json_file('./merged.json', merged_list)
 
-puts "#{merged_list}"
