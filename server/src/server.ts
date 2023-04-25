@@ -19,7 +19,8 @@ import {
   MarkupKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import actions_list from "../../shared/actions_list.json";
+import { actions_list } from './config';
+
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
