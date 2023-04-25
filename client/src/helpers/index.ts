@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { accessSync, constants, writeFile } from "fs";
+import { accessSync, constants } from "fs";
 import path = require("path");
 
 export function convertToClassName(functionName: string): string {
@@ -22,40 +22,6 @@ interface Action {
   path: string;
 }
 
-export function parseOutput(output: string, outputPath: string): Promise<void> {
-  // const regex = /.*\/(.*?)\.rb/g;
-  // const matches = output.match(regex);
-  // const actions = matches?.map((match) => {
-  //   const path = match.trim();
-  //   const actionName = path.split("/").pop()?.replace(".rb", "");
-  //   return { actionName, path };
-  // });
-  // if (actions) {
-  //   const json = JSON.stringify(actions, null, 2);
-
-  //   return new Promise((resolve, reject) => {
-  //     writeFile(outputPath, json, (err) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve();
-  //       }
-  //     });
-  //   });
-  // } else {
-  //   Promise.reject(new Error("No matches found."));
-  // }
-  console.log("inside parse output");
-   return new Promise((resolve, reject) => {
-      writeFile(outputPath, output, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-}
 
 export function fileExists(filePath: string): boolean {
   try {
@@ -84,16 +50,4 @@ export function fetchFastlaneDoc(
     });
   });
 }
-export function runRubyScript(
-  scriptPath: string
-): Promise<{ stdout: string; stderr: string }> {
-  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    exec(`ruby ${scriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-  });
-}
+
