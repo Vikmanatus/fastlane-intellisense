@@ -35,10 +35,10 @@ let client: LanguageClient;
 export function activate(context: ExtensionContext) {
   const commandManagerInstance = new CommandsManager();
   commandManagerInstance.init();
-
+  const serverPath = path.join("server", "out", "server", "src","server.js");
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
-    path.join("server", "out", "server.js")
+    serverPath
   );
   context.subscriptions.push(
     languages.registerDefinitionProvider(
