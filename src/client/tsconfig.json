@@ -6,6 +6,7 @@
 	  "sourceMap": true,
 	  "resolveJsonModule": true,
 	  "esModuleInterop": true,
+	  "composite": true
 	},
 	"include": ["src","../shared","../shared/actions_list.json", "./scripts"],
 	"exclude": ["node_modules", ".vscode-test"],

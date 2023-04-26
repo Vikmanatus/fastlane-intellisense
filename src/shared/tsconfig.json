@@ -8,6 +8,7 @@
 	  "strict": true,
 	  "resolveJsonModule": true,
 	  "esModuleInterop": true,
+	  "composite": true
 	},
 	"include": ["src", "actions_list.json"],
 	"exclude": ["node_modules", ".vscode-test", ],
