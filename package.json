@@ -23,7 +23,7 @@
 		"onLanguage:ruby",
 		"onCommand:fastlane-intellisense.setupConfig"
 	],
-	"main": "./out/client/src/extension",
+	"main": "./out/client/src/extension.js",
 	"contributes": {
 		"commands":[
 			{

@@ -3,13 +3,13 @@
 	  "module": "commonjs",
 	  "target": "es2020",
 	  "lib": ["es2020"],
-	  "outDir": "./out",
+	  "outDir": "out",
+	  "rootDir": "src",
 	  "sourceMap": true,
 	  "strict": true,
-	  "rootDir": "src"
 	},
 	"include": ["src/client", "src/server", "src/shared"],
-	"exclude": ["node_modules", ".vscode-test", "./src/server/node_modules", "./src/client/node_modules"],
+	"exclude": ["node_modules", ".vscode-test"],
 	"references": [{ "path": "./src/client" }, { "path": "./src/server" }, {"path": "./src/shared"}]
   }
   
