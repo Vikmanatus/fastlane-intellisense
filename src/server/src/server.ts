@@ -19,7 +19,7 @@ import {
   MarkupKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { actions_list } from '../../shared/config'; 
+import { actions_list } from '../../shared/src/config'; 
 
 
 // Create a connection for the server, using Node's IPC as a transport.
