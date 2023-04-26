@@ -12,15 +12,12 @@ import Provider from "../logic/Provider";
 import { convertToClassName, fileExists } from "../helpers";
 
 class ActionDefinitionProvider extends Provider implements DefinitionProvider {
-  private findFunctionDefinition(
-    document: TextDocument,
-    actionName: string
-  ): Position {
+  private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");
     for (let i = 0; i < document.lineCount; i++) {
       const line = document.lineAt(i);
       const match = line.text.match(regex);
-      if (match) {
+      if (match?.index) {
         return new Position(i, match.index);
       }
     }
