@@ -1,4 +1,4 @@
-import actions_list_completion from "../actions_list.json";
+import actions_list_completion from "../../actions_list.json";
 
 export type ActionListType = {
   action_name: string;

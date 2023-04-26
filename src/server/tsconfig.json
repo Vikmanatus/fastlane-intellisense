@@ -10,7 +10,7 @@
 	  "esModuleInterop": true,
 	  "composite": true,
 	},
-	"include": ["src","../shared"],
+	"include": ["src","../shared", "../shared/actions_list.json", ],
 	"exclude": ["node_modules", ".vscode-test", ],
 	"extends":"../../tsconfig.json"
   }
