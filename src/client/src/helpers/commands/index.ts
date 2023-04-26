@@ -37,7 +37,7 @@ export const setupVirtualDocumentCommandHandler = (): CommandHandlerType => {
   const command = "fastlane-intellisense.openTextDoc";
   const commandHandler = async (args?: { actionName: string }) => {
     const uri = Uri.parse(
-      "fastlane-intellisense-doc:" + `fastlane-action-doc.md?${args.actionName}`
+      "fastlane-intellisense-doc:" + `fastlane-action-doc.md?${args?.actionName}`
     );
     await commands.executeCommand(
       "markdown.showPreviewToSide",

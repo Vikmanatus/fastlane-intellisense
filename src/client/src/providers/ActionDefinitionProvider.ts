@@ -27,7 +27,7 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     document: TextDocument,
     position: Position,
     token: CancellationToken
-  ): Promise<Location> {
+  ) {
     // TODO: need to escape parenthesis inside text_element
     const range = document.lineAt(position).range;
     const text_element = document.getText(range).trim();
@@ -41,6 +41,9 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
         targetDocument,
         convertToClassName(text_element)
       );
+      if(!targetPosition){
+        return null;
+      }
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),
