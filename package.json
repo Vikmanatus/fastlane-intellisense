@@ -63,8 +63,8 @@
 		"vscode:prepublish": "yarn run compile",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
-		"lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
-		"postinstall": "cd client && yarn install && cd ../server && yarn install && cd ..",
+		"lint": "eslint ./src/client ./src/server ./src/shared --ext .ts,.tsx",
+		"postinstall": "bash ./scripts/postinstall.sh",
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
