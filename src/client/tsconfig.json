@@ -8,6 +8,7 @@
 	  "esModuleInterop": true,
 	  "composite": true
 	},
-	"include": ["src", "../src/shared", "./scripts"],
-	"exclude": ["node_modules", ".vscode-test"]
+	"include": ["src","../shared", "./scripts"],
+	"exclude": ["node_modules", ".vscode-test"],
+	"extends":"../../tsconfig.json"
   }
