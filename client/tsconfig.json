@@ -8,6 +8,6 @@
 	  "esModuleInterop": true,
 	  "composite": true
 	},
-	"include": ["src", "../shared", "./scripts"],
+	"include": ["src", "../src/shared", "./scripts"],
 	"exclude": ["node_modules", ".vscode-test"]
   }
