@@ -36,7 +36,7 @@ If the project is not compiled before running the project with the debugger, the
 
 Actually with the current setup, the `actions_list.json` is compiled inside the bundle.
 
-`TODO`: fix bunlde issue and remove the `actions_list.json` from the bundle.
+`TODO`: fix bundle issue and remove the `actions_list.json` from the final bundle.
 
 ## 📊 Roadmap
 
