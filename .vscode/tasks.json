@@ -29,19 +29,5 @@
 				"$tsc-watch"
 			]
 		},
-		{
-			"label": "webpack",
-			"type": "shell",
-			"command": "npm run webpack",
-			"group": {
-			  "kind": "build",
-			  "isDefault": true
-			},
-			"presentation": {
-			  "panel": "shared",
-			  "reveal": "silent"
-			},
-			"problemMatcher": []
-		  }
 	]
 }

@@ -8,9 +8,9 @@
 			"name": "Launch Client",
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-			"outFiles": ["${workspaceFolder}/dist/client/src/*.js"],
+			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
 			"autoAttachChildProcesses": true,
-			"preLaunchTask": "webpack",
+			"preLaunchTask": "npm: webpack",
 			"resolveSourceMapLocations": [
 				"${workspaceFolder}/**",
 				"!**/node_modules/**"
