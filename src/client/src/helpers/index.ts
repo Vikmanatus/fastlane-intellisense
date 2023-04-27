@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import { accessSync, constants } from "fs";
-import path = require("path");
+import path from "path";
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words

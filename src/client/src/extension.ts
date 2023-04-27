@@ -21,7 +21,7 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-import * as dotenv from "dotenv";
+// import * as dotenv from "dotenv";
 import {
   DocHoverProvider,
   ActionDefinitionProvider,
@@ -29,7 +29,7 @@ import {
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
 
-dotenv.config({ path: path.join(__dirname, "../.env") });
+// dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
 
