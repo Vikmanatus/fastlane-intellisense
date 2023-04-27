@@ -5,3 +5,4 @@ client/server
 actions_list.json
 .env
 .DS_Store
+dist
