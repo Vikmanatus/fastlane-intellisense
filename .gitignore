@@ -4,3 +4,4 @@ client/server
 .vscode-test
 actions_list.json
 .env
+.DS_Store
