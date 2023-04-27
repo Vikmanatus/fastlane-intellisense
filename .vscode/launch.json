@@ -10,7 +10,11 @@
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}"],
 			"outFiles": ["${workspaceRoot}/dist/**/*.js"],
 			"autoAttachChildProcesses": true,
-			"preLaunchTask": "npm: webpack"
+			"preLaunchTask": "npm: webpack",
+			"resolveSourceMapLocations": [
+				"${workspaceRoot}/**",
+				"!**/node_modules/**"
+			  ],
 		},
 		{
 			"name": "Language Server E2E Test",
