@@ -15,7 +15,7 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
     if (matchPath) {
       const scriptPath = path.join(
         __dirname,
-        "../../../../../scripts/get_fastlane_actions.rb"
+        "../../../scripts/get_fastlane_actions.rb"
       );
       const terminal = window.createTerminal("Run Ruby Script");
 
