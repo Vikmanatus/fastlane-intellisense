@@ -26,13 +26,7 @@ For the moment, this extension contains the following features:
 
 ✅ Development and production bundles handled by `Webpack`
 
-## 📉 Regression
 
-- Since webpack addition, the VSCode debugger is unable to set the breakpoints in debug mode
-
-**UPDATE**: The debugger "works" partially:
-
-You have to do a refresh for the `server` breakpoints to be attached
 ## 📊 Roadmap
 
 -  Add debugger support for `Fastfile`
@@ -56,3 +50,8 @@ This project was bootstaped from the `lsp-example` [repository](https://github.c
 - Select `Launch Client` from the drop down (if it is not already).
 - Press `▷` to run the launch config (`F5`).
 - In the [Extension Development Host](https://code.visualstudio.com/api/get-started/your-first-extension#:~:text=Then%2C%20inside%20the%20editor%2C%20press%20F5.%20This%20will%20compile%20and%20run%20the%20extension%20in%20a%20new%20Extension%20Development%20Host%20window.) instance of VSCode, open a `Fastfile` handled by `ruby` language mode.
+
+
+## 🐛 Debugging
+
+**Note**: If the breakpoints of the server part are not triggered on the first fly, symply click on the restart icon
