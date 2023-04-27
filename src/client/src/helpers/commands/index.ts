@@ -10,12 +10,12 @@ export const setupConfigCommmandHandler = (): CommandHandlerType => {
       /^(.*?[\\/])[a-zA-Z]:?[\\/]?[^\\/]*?[\\/]?fastlane-intellisense[\\/]/g;
     const prodRegex =
       /^(.*?[\\/])[a-zA-Z]:?[\\/]?[^\\/]*?[\\/]?vikmanatus\.fastlane-intellisense-.*?[\\/]/g;
-    const regex = process.env.NODE_ENV === "development" ? devRegex : prodRegex;
+    const regex = devRegex;
     const matchPath = __dirname.match(regex);
     if (matchPath) {
       const scriptPath = path.join(
         __dirname,
-        "../../../src/scripts/get_fastlane_actions.rb"
+        "../../../../../scripts/get_fastlane_actions.rb"
       );
       const terminal = window.createTerminal("Run Ruby Script");
 

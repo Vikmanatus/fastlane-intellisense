@@ -1,7 +1,6 @@
 # frozen_string_literal: true
-require 'fastlane'
-require 'json'
-
+require "fastlane"
+require "json"
 
 def config_item_to_hash(config_item)
   {
@@ -11,25 +10,24 @@ def config_item_to_hash(config_item)
     default_value: config_item.default_value,
     optional: config_item.optional,
     is_string: config_item.is_string,
-    data_type: config_item.data_type
+    data_type: config_item.data_type,
   }
 end
 
 def generate_file_paths_list
   Fastlane::Actions.load_default_actions.map do |file_path|
-    action_name = File.basename(file_path, '.rb')
-    { 'action_name' => action_name, 'file_path' => file_path }
+    action_name = File.basename(file_path, ".rb")
+    { "action_name" => action_name, "file_path" => file_path }
   end
 end
 
 def write_to_json_file(file_path, data)
-  File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
+  File.open(file_path, "w") { |f| f.write(JSON.pretty_generate(data)) }
 end
 
 file_paths_list = generate_file_paths_list
 
 # write_to_json_file('./file_path.json', file_paths_list)
-
 
 list = Fastlane::Actions.get_all_official_actions
 valid_action_number = 0
@@ -42,8 +40,7 @@ list.each do |element|
     # puts "INSTANCE #{action_name}"
     valid_action_number += 1
     begin
-
-      options_check = instance.method('available_options')
+      options_check = instance.method("available_options")
       if !options_check.call.nil? && !options_check.call.empty?
         hash_list = options_check.call.map do |config_item|
           if config_item.is_a?(FastlaneCore::ConfigItem)
@@ -58,20 +55,20 @@ list.each do |element|
                 default_value: nil,
                 optional: nil,
                 is_string: nil,
-                data_type: nil
+                data_type: nil,
               }
             end
           end
         end
-        completion_list.append({ 'action_name' => action_name, 'args' => hash_list })
+        completion_list.append({ "action_name" => action_name, "args" => hash_list })
       else
         # puts "INVALID INSTANCE: #{action_name}"
-        completion_list.append({ 'action_name' => action_name, 'args' => nil })
+        completion_list.append({ "action_name" => action_name, "args" => nil })
       end
     rescue NameError => e
       invalid_action_number += 1
       # puts "Skipping #{instance.to_s} due to an issue with uninitialized constants: #{e.message}"
-      completion_list.append({ 'action_name' => action_name, 'args' => nil })
+      completion_list.append({ "action_name" => action_name, "args" => nil })
     end
   else
     invalid_action_number += 1
@@ -82,7 +79,6 @@ end
 # puts "TOTAL ACTIONS: #{list.length}"
 # puts "VALID INSTANCES: #{valid_action_number}"
 # puts "INVALID INSTANCES: #{invalid_action_number}"
-
 
 # write_to_json_file('./temp.json', completion_list)
 
@@ -104,13 +100,11 @@ completion_list.each do |element|
   end
 end
 
-
 merged_hash.delete_if { |action_name, _| !completion_list.any? { |el| el["action_name"] == action_name } }
 
 # Convert the merged_hash back into an array
 merged_list = merged_hash.values
 
-output_file_path = File.expand_path(File.join(__dir__, '..', '..', '..', 'etc', 'file.json'))
+output_file_path = File.expand_path(File.join(__dir__, "..", "src", "shared", "file.json"))
 
 write_to_json_file(output_file_path, merged_list)
-
