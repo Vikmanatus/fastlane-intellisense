@@ -1,15 +1,16 @@
 {
-	"compilerOptions": {
-	  "module": "commonjs",
-	  "target": "es2020",
-	  "lib": ["es2020"],
-	  "outDir": "out",
-	  "rootDir": "src",
-	  "sourceMap": true,
-	  "strict": true,
-	},
-	"include": ["src/client", "src/server", "src/shared"],
-	"exclude": ["node_modules", ".vscode-test"],
-	"references": [{ "path": "./src/client" }, { "path": "./src/server" }, {"path": "./src/shared"}]
-  }
-  
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es2020"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "outDir": "out",
+    "rootDir": "src"
+  },
+  "include": ["src", "src/shared/actions_list.json"],
+  "exclude": ["node_modules", ".vscode-test"]
+}
