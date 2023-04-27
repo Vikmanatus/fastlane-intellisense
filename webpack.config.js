@@ -8,8 +8,7 @@ const webpack = require("webpack");
 /**@type {import('webpack').Configuration}*/
 const config = {
   target: "webworker", // vscode extensions run in webworker context for VS Code web 📖 -> https://webpack.js.org/configuration/target/#target
-
-  entry: "./src/extension.ts", // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+  entry: "./src/client/src/extension.ts", // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
     path: path.resolve(__dirname, "dist", "client", "src"),
@@ -23,7 +22,7 @@ const config = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    mainFields: ["browser", "module", "main"], // look for `browser` entry point in imported node modules
+    mainFields: ["browser","module", "main"], // look for `browser` entry point in imported node modules
     extensions: [".ts", ".js"],
     alias: {
       // provides alternate implementation for node module and source files
