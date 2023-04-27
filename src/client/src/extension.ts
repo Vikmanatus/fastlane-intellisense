@@ -21,7 +21,7 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-import * as dotenv from "dotenv";
+// import * as dotenv from "dotenv";
 import {
   DocHoverProvider,
   ActionDefinitionProvider,
@@ -29,18 +29,16 @@ import {
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
 
-dotenv.config({ path: path.join(__dirname, "../.env") });
+// dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   const commandManagerInstance = new CommandsManager();
   commandManagerInstance.init();
-  const serverPath = path.join("out", "server", "src","server.js");
+  const serverPath = path.join("dist", "server.js");
   // The server is implemented in node
-  const serverModule = context.asAbsolutePath(
-    serverPath
-  );
+  const serverModule = context.asAbsolutePath(serverPath);
   context.subscriptions.push(
     languages.registerDefinitionProvider(
       { scheme: "file", language: "ruby" },
@@ -63,7 +61,6 @@ export function activate(context: ExtensionContext) {
     )
   );
   context.subscriptions.push(virtualDocProvider, virtualProviderRegistration);
-
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
