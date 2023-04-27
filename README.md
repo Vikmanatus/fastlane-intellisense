@@ -26,7 +26,11 @@ For the moment, this extension contains the following features:
 
 ✅ Development and production bundles handled by `Webpack`
 
+## 📉 Regression
 
+Debugger:
+
+If the project is not compiled before running the project with the debugger, there may be some breakpoints at the begining of the `server.ts` file who will not be triggered on the first fly. If the contributor clicks on restart, then all the breakpoints on the `server` part should be triggered. 
 ## 📊 Roadmap
 
 -  Add debugger support for `Fastfile`
