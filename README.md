@@ -30,6 +30,9 @@ For the moment, this extension contains the following features:
 
 - Since webpack addition, the VSCode debugger is unable to set the breakpoints in debug mode
 
+**UPDATE**: The debugger "works" partially:
+
+You have to do a refresh for the `server` breakpoints to be attached
 ## 📊 Roadmap
 
 -  Add debugger support for `Fastfile`

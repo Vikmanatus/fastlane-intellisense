@@ -36,11 +36,9 @@ let client: LanguageClient;
 export function activate(context: ExtensionContext) {
   const commandManagerInstance = new CommandsManager();
   commandManagerInstance.init();
-  const serverPath = path.join("out", "server", "src","server.js");
+  const serverPath = path.join("dist", "server.js");
   // The server is implemented in node
-  const serverModule = context.asAbsolutePath(
-    serverPath
-  );
+  const serverModule = context.asAbsolutePath(serverPath);
   context.subscriptions.push(
     languages.registerDefinitionProvider(
       { scheme: "file", language: "ruby" },
@@ -63,7 +61,7 @@ export function activate(context: ExtensionContext) {
     )
   );
   context.subscriptions.push(virtualDocProvider, virtualProviderRegistration);
-
+  const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -71,6 +69,7 @@ export function activate(context: ExtensionContext) {
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
+      options: debugOptions,
     },
   };
   // Options to control the language client
