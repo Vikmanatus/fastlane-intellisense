@@ -64,7 +64,6 @@
     "compile": "tsc -b",
     "watch": "tsc -b -w",
     "lint": "eslint ./src/client ./src/server ./src/shared --ext .ts,.tsx",
-    "postinstall": "bash ./scripts/postinstall.sh",
     "test": "sh ./scripts/e2e.sh"
   },
   "dependencies": {
