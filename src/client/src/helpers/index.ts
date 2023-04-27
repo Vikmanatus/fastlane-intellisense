@@ -39,7 +39,7 @@ export function fetchFastlaneDoc(
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
     const scriptPath = path.join(
       __dirname,
-      "../../scripts/scrap_action.py"
+      "../scripts/scrap_action.py"
     );
     exec(`python3 ${scriptPath} ${actionName}`, (error, stdout, stderr) => {
       if (error) {

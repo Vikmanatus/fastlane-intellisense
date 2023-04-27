@@ -7,7 +7,7 @@ import {
   Uri,
 } from "vscode";
 import Provider from "../logic/Provider";
-import { actions_list } from '../../../shared/src/config';
+import { actions_list } from '@/shared/src/config';
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(

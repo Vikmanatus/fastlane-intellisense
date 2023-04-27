@@ -9,7 +9,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "outDir": "out",
-    "rootDir": "src"
+    "rootDir": "src",
+    "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
+    "paths": {
+      "@/*": ["src/*"] /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    },
   },
   "include": ["src", "src/shared/actions_list.json"],
   "exclude": ["node_modules", ".vscode-test"]

@@ -30,6 +30,7 @@ const config = {
     extensions: [".ts", ".js"],
     alias: {
       // provides alternate implementation for node module and source files
+      "@": path.resolve(__dirname, "src"),
     },
     fallback: {
       // Webpack 5 no longer polyfills Node.js core modules automatically.
