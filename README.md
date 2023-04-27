@@ -16,17 +16,24 @@ Simply run this command, and you are ready 😃
 
 For the moment, this extension contains the following features:
 
-- Providing basic autocompletion list with all the `fastlane` actions available
-- `Go to definition` functionnality to navigate you to the `fastlane` action class file
-- Documentation for each action loading in `VSCode Virtual Document`
-- Development and production bundles handled by `Webpack`
+✅ Providing basic autocompletion list with all the `fastlane` actions available
+
+✅ `Go to definition` functionnality to navigate you to the `fastlane` action class file
+
+✅ Documentation for each action loading in `VSCode Virtual Document`
+
+![Alt Text](./assets/doc.gif)
+
+✅ Development and production bundles handled by `Webpack`
+
 ## 📉 Regression
 
 - Since webpack addition, the VSCode debugger is unable to set the breakpoints in debug mode
 
 ## 📊 Roadmap
 
-- Add debugger support for `Fastfile`
+-  Add debugger support for `Fastfile`
+
 ## 📚 Ressources
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
