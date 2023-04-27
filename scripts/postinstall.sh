@@ -1,16 +1,16 @@
 #!/bin/bash
 
-echo "Installing client dependencies..."
-echo -e "\n"
+# echo "Installing client dependencies..."
+# echo -e "\n"
 
-cd ./src/client && yarn install
+# cd ./src/client && yarn install
 
-cd ..
+# cd ..
 
-echo -e "\n"
+# echo -e "\n"
 
-echo "Installing server dependencies..."
-echo -e "\n"
-cd ./server && yarn install
+# echo "Installing server dependencies..."
+# echo -e "\n"
+# cd ./server && yarn install
 
-cd ../../
+# cd ../../

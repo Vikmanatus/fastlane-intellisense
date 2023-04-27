@@ -3,7 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import {
-  createConnection,
   TextDocuments,
   Diagnostic,
   DiagnosticSeverity,
@@ -17,6 +16,7 @@ import {
   InitializeResult,
   Definition,
   MarkupKind,
+  createConnection,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { actions_list } from '../../shared/src/config'; 
