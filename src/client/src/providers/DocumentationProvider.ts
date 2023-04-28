@@ -24,9 +24,9 @@ class DocumentationProvider {
   private async _fetchDocumentation() {
     // Temporarilly faking asynchronous operation
     const documentationContent = await fetchFastlaneDoc(this._actionName);
-    if (documentationContent.stdout) {
+    if (documentationContent) {
       this._documentationContent.shift();
-      const contents = new MarkdownString(documentationContent.stdout);
+      const contents = new MarkdownString("");
       contents.isTrusted = true;
       contents.supportHtml = true;
       this._documentationContent.push(contents.value);
