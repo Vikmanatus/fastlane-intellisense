@@ -31,6 +31,20 @@ export function fileExists(filePath: string): boolean {
     return false;
   }
 }
+function removeComments(node: ChildNode) {
+  let i = 0;
+  const children = node.childNodes;
+
+  while (i < children.length) {
+    if (children[i].nodeType == 8) {
+      // Node.COMMENT_NODE == 8
+      node.removeChild(children[i]);
+    } else {
+      removeComments(children[i]);
+      i++;
+    }
+  }
+}
 
 export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
   const domActionPageElement = new JSDOM(fastlaneHtmlPage);
@@ -42,15 +56,18 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
   }
 
   parsedDoc.forEach((element) => {
-    const imgTags = element.querySelectorAll('img');
+    const imgTags = element.querySelectorAll("img");
     imgTags.forEach((imgTag) => {
-      const src = imgTag.getAttribute('src');
-      if (src && !src.startsWith('https')) {
+      const src = imgTag.getAttribute("src");
+      if (src && !src.startsWith("https")) {
         imgTag.remove();
       }
     });
+    removeComments(element);
   });
-  const documentationContent = parsedDoc.map(element => element.outerHTML).join('');
+  const documentationContent = parsedDoc
+    .map((element) => element.outerHTML)
+    .join("");
 
   return documentationContent;
 }
