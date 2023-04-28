@@ -1,6 +1,8 @@
-import { exec } from "child_process";
 import { accessSync, constants } from "fs";
-import path from "path";
+import axios from "axios";
+import { JSDOM } from "jsdom";
+import { html as beautify } from "js-beautify";
+import hljs from "highlight.js";
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -22,7 +24,6 @@ interface Action {
   path: string;
 }
 
-
 export function fileExists(filePath: string): boolean {
   try {
     // Check if the file exists
@@ -32,21 +33,68 @@ export function fileExists(filePath: string): boolean {
     return false;
   }
 }
+function removeComments(node: ChildNode) {
+  let i = 0;
+  const children = node.childNodes;
 
-export function fetchFastlaneDoc(
-  actionName: string
-): Promise<{ stdout: string; stderr: string }> {
-  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    const scriptPath = path.join(
-      __dirname,
-      "../scripts/scrap_action.py"
-    );
-    exec(`python3 ${scriptPath} ${actionName}`, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve({ stdout, stderr });
+  while (i < children.length) {
+    if (children[i].nodeType == 8) {
+      // Node.COMMENT_NODE == 8
+      node.removeChild(children[i]);
+    } else {
+      removeComments(children[i]);
+      i++;
+    }
+  }
+}
+
+export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
+  const domActionPageElement = new JSDOM(fastlaneHtmlPage);
+  const parsedDoc = Array.from(
+    domActionPageElement.window.document.querySelectorAll("div.section")
+  );
+  if (!parsedDoc.length) {
+    return "An error seems to have occured";
+  }
+
+  parsedDoc.forEach((element) => {
+    const imgTags = element.querySelectorAll("img");
+    imgTags.forEach((imgTag) => {
+      const src = imgTag.getAttribute("src");
+      if (src && !src.startsWith("https")) {
+        imgTag.remove();
       }
     });
+    const codesTags = element.querySelectorAll("pre code");
+    codesTags.forEach((el) => {
+      hljs.highlightBlock(el as HTMLElement);
+    });
+    removeComments(element);
+  });
+
+  const htmlDoc = parsedDoc.map((element) => element.outerHTML).join("");
+  const htmlFormattedDoc = `
+    <head>
+      <style>  
+      .section pre code {
+        white-space: pre;
+      }
+      </style>
+    </head>
+      ${htmlDoc}
+  `;
+  const documentationContent = beautify(htmlFormattedDoc, {
+    indent_size: 2,
+    indent_body_inner_html: true,
+  });
+
+  return documentationContent;
+}
+export function fetchFastlaneDoc(actionName: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`https://docs.fastlane.tools/actions/${actionName}/`)
+      .then((result) => resolve(result.data))
+      .catch((err) => reject(err));
   });
 }
