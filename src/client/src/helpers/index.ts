@@ -1,6 +1,7 @@
 import { accessSync, constants } from "fs";
 import axios from "axios";
 import { JSDOM } from "jsdom";
+import { html as beautify } from 'js-beautify';
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -65,9 +66,9 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
     });
     removeComments(element);
   });
-  const documentationContent = parsedDoc
+  const documentationContent = beautify(parsedDoc
     .map((element) => element.outerHTML)
-    .join("");
+    .join(""),{ indent_size: 2, indent_body_inner_html: true});
 
   return documentationContent;
 }
