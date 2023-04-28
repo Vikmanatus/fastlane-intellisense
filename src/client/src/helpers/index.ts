@@ -2,6 +2,7 @@ import { accessSync, constants } from "fs";
 import axios from "axios";
 import { JSDOM } from "jsdom";
 import { html as beautify } from 'js-beautify';
+import hljs from 'highlight.js';
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -63,6 +64,10 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
       if (src && !src.startsWith("https")) {
         imgTag.remove();
       }
+    });
+    const codesTags = element.querySelectorAll("pre code");
+    codesTags.forEach((el)=>{
+      hljs.highlightBlock(el as HTMLElement);
     });
     removeComments(element);
   });
