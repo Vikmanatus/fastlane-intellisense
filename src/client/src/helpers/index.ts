@@ -76,9 +76,24 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
   const htmlFormattedDoc = `
     <head>
       <style>  
-        .section pre code {
-          white-space: pre;
-        }
+      .hljs-symbol {
+        color: #f54ce1;
+      }
+      .hljs-string {
+        color: #183691;
+      }
+      .section pre code .hljs-comment {
+        color: #f54ce1;
+        font-style: italic;
+      }
+
+      .section pre code {
+        white-space: pre;
+        word-wrap: normal;
+        display: block;
+        padding: 12px;
+        font-size: 12px;
+      }
       </style>
     </head>
       ${htmlDoc}
