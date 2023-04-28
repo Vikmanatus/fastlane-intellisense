@@ -1,8 +1,8 @@
 import { accessSync, constants } from "fs";
 import axios from "axios";
 import { JSDOM } from "jsdom";
-import { html as beautify } from 'js-beautify';
-import hljs from 'highlight.js';
+import { html as beautify } from "js-beautify";
+import hljs from "highlight.js";
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -66,14 +66,48 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
       }
     });
     const codesTags = element.querySelectorAll("pre code");
-    codesTags.forEach((el)=>{
+    codesTags.forEach((el) => {
       hljs.highlightBlock(el as HTMLElement);
     });
     removeComments(element);
   });
-  const documentationContent = beautify(parsedDoc
-    .map((element) => element.outerHTML)
-    .join(""),{ indent_size: 2, indent_body_inner_html: true});
+
+  const htmlDoc = parsedDoc.map((element) => element.outerHTML).join("");
+  const htmlFormattedDoc = `
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <style>
+        .hljs-symbol {
+          color: #0086b3;
+        }
+        .hljs-string {
+          color: #183691;
+        }
+        .hljs-comment,
+        .hljs-quote {
+          color: #998;
+          font-style: italic;
+        }
+  
+        .section pre code {
+          white-space: pre;
+          word-wrap: normal;
+          display: block;
+          padding: 12px;
+          font-size: 12px;
+        }
+      </style>
+    </head>
+    <body>
+      ${htmlDoc}
+    </body>
+  </html>  
+  `;
+  const documentationContent = beautify(htmlFormattedDoc, {
+    indent_size: 2,
+    indent_body_inner_html: true,
+  });
 
   return documentationContent;
 }
