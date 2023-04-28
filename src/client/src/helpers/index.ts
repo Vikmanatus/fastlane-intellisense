@@ -2,6 +2,8 @@ import { exec } from "child_process";
 import { accessSync, constants } from "fs";
 import path from "path";
 import axios from "axios";
+import { JSDOM } from 'jsdom';
+
 export function convertToClassName(functionName: string): string {
   // split the function name into words
   const words = functionName.split("_");
@@ -38,6 +40,7 @@ export function fetchFastlaneDoc(actionName: string): Promise<string> {
       .get(`https://docs.fastlane.tools/actions/${actionName}/`)
       .then((result) => {
         const testReponse = result;
+        const test = new JSDOM(testReponse.data);
         resolve("fake result");
       })
       .catch((err) => {

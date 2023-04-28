@@ -56,5 +56,11 @@ const config = {
       },
     ],
   },
+  plugins: [
+    new webpack.IgnorePlugin({
+      resourceRegExp: /canvas/,
+      contextRegExp: /jsdom$/,
+    }),
+  ],
 };
 module.exports = config;
