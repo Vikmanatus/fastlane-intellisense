@@ -83,17 +83,13 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
         color: #053069;
       }
       
-      .section pre code .hljs-comment {
-        color: #f54ce1;
-        font-style: italic;
-      }
+      // .section pre code .hljs-comment {
+      //   color: #f54ce1;
+      //   font-style: italic;
+      // }
 
       .section pre code {
         white-space: pre;
-        word-wrap: normal;
-        display: block;
-        padding: 12px;
-        font-size: 12px;
       }
       </style>
     </head>
