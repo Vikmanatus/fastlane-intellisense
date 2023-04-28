@@ -1,8 +1,6 @@
-import { exec } from "child_process";
 import { accessSync, constants } from "fs";
-import path from "path";
 import axios from "axios";
-import { JSDOM } from 'jsdom';
+import { JSDOM } from "jsdom";
 
 export function convertToClassName(functionName: string): string {
   // split the function name into words
@@ -34,25 +32,26 @@ export function fileExists(filePath: string): boolean {
   }
 }
 
-export function parseDocumentation(list: Element[]){
-  list.map((element)=>{
-    const node = element;
-    return node;
+export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
+  const domActionPageElement = new JSDOM(fastlaneHtmlPage);
+  const parsedDoc = Array.from(
+    domActionPageElement.window.document.querySelectorAll("div.section")
+  );
+  if (!parsedDoc.length) {
+    return "An error seems to have occured";
+  }
+  let documentationContent = "";
+  parsedDoc.forEach((element) => {
+    documentationContent += element.outerHTML;
   });
+
+  return documentationContent;
 }
 export function fetchFastlaneDoc(actionName: string): Promise<string> {
   return new Promise((resolve, reject) => {
     axios
       .get(`https://docs.fastlane.tools/actions/${actionName}/`)
-      .then((result) => {
-        const testReponse = result;
-        const test = new JSDOM(testReponse.data);
-        const parsedDoc = Array.from(test.window.document.querySelectorAll('div.section'))[0]?.outerHTML;
-        // parseDocumentation(parsedDoc);
-        resolve(parsedDoc);
-      })
-      .catch((err) => {
-        reject(err);
-      });
+      .then((result) => resolve(result.data))
+      .catch((err) => reject(err));
   });
 }

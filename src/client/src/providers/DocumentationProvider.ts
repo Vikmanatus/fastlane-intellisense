@@ -1,5 +1,5 @@
 import { EventEmitter, MarkdownString, Uri } from "vscode";
-import { fetchFastlaneDoc } from "../helpers";
+import { fetchFastlaneDoc, parseFastlaneDoc } from "../helpers";
 
 class DocumentationProvider {
   private readonly _uri: Uri;
@@ -21,20 +21,31 @@ class DocumentationProvider {
     // Start with printing an temporary message while we fecth the documentation
     this._fetchDocumentation();
   }
+  private createMarkdownElement(content:string): MarkdownString{
+    const contents = new MarkdownString(content);
+    contents.isTrusted = true;
+    contents.supportHtml = true;
+    return contents;
+  }
   private async _fetchDocumentation() {
     // Temporarilly faking asynchronous operation
-    const documentationContent = await fetchFastlaneDoc(this._actionName);
-    if (documentationContent) {
-      this._documentationContent.shift();
-      const contents = new MarkdownString(documentationContent);
-      contents.isTrusted = true;
-      contents.supportHtml = true;
-      this._documentationContent.push(contents.value);
-      this._documentationContent.push(
-        "**Note**: This document has been scrapped from the official fastlane documentation"
-      );
-      this._emitter.fire(this._uri);
-    }
+    fetchFastlaneDoc(this._actionName)
+      .then((result) => parseFastlaneDoc(result))
+      .then((result) => {
+        this._documentationContent.shift();
+        const contents = this.createMarkdownElement(result);
+        this._documentationContent.push(contents.value);
+        this._documentationContent.push(
+          "**Note**: This document has been scrapped from the official fastlane documentation"
+        );
+        this._emitter.fire(this._uri);
+      })
+      .catch((_err) => {
+        this._documentationContent.shift();
+        const contents = this.createMarkdownElement("An internal error has occured.");
+        this._documentationContent.push(contents.value);
+        this._emitter.fire(this._uri);
+      });
   }
 }
 export default DocumentationProvider;
