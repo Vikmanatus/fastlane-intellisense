@@ -12,15 +12,12 @@ import Provider from "../logic/Provider";
 import { convertToClassName, fileExists } from "../helpers";
 
 class ActionDefinitionProvider extends Provider implements DefinitionProvider {
-  private findFunctionDefinition(
-    document: TextDocument,
-    actionName: string
-  ): Position {
+  private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");
     for (let i = 0; i < document.lineCount; i++) {
       const line = document.lineAt(i);
       const match = line.text.match(regex);
-      if (match) {
+      if (match?.index) {
         return new Position(i, match.index);
       }
     }
@@ -30,11 +27,11 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     document: TextDocument,
     position: Position,
     token: CancellationToken
-  ): Promise<Location> {
+  ) {
     // TODO: need to escape parenthesis inside text_element
     const range = document.lineAt(position).range;
     const text_element = document.getText(range).trim();
-
+    // TODO: Fix path handling with path provided in actions list
     const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
     const file_exists = fileExists(targetPath);
 
@@ -44,6 +41,9 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
         targetDocument,
         convertToClassName(text_element)
       );
+      if(!targetPosition){
+        return null;
+      }
       return Promise.resolve(
         new Location(
           Uri.file(targetPath),

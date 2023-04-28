@@ -7,7 +7,8 @@ import {
   Uri,
 } from "vscode";
 import Provider from "../logic/Provider";
-import actions_list from "../actions_list.json";
+import { actions_list } from '@/shared/src/config';
+
 export class DocHoverProvider extends Provider implements HoverProvider {
   provideHover(
     document: TextDocument,
@@ -18,7 +19,7 @@ export class DocHoverProvider extends Provider implements HoverProvider {
     const word = document.getText(range).trim();
     const args = [{ actionName: word }];
     const matchWord = actions_list.filter(
-      (element) => element.actionName === word
+      (element) => element.action_name === word
     );
     if (matchWord.length) {
       const searchCommandUri = Uri.parse(

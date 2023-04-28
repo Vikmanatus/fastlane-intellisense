@@ -3,7 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import {
-  createConnection,
   TextDocuments,
   Diagnostic,
   DiagnosticSeverity,
@@ -17,9 +16,11 @@ import {
   InitializeResult,
   Definition,
   MarkupKind,
+  createConnection,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import actions_list from "./actions_list.json";
+import { actions_list } from '@/shared/src/config'; 
+
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -212,7 +213,7 @@ connection.onCompletion(
     // which code complete got requested. For the example we ignore this
     // info and always provide the same completion items.
     const list = actions_list.map((element) => {
-      return { label: element.actionName, kind: CompletionItemKind.Function };
+      return { label: element.action_name, kind: CompletionItemKind.Function };
     });
     return list;
   }

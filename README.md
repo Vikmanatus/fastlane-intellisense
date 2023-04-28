@@ -16,9 +16,32 @@ Simply run this command, and you are ready 😃
 
 For the moment, this extension contains the following features:
 
-- Providing basic autocompletion list with all the `fastlane` actions available
-- `Go to definition` functionnality to navigate you to the `fastlane` action class file
-- Documentation for each action loading in `VSCode Virtual Document`
+✅ Providing basic autocompletion list with all the `fastlane` actions available
+
+✅ `Go to definition` functionnality to navigate you to the `fastlane` action class file
+
+✅ Documentation for each action loading in `VSCode Virtual Document`
+
+![Alt Text](./assets/doc.gif)
+
+✅ Development and production bundles handled by `Webpack`
+
+## 📉 Regression
+
+- Debugger:
+
+If the project is not compiled before running the project with the debugger, there may be some breakpoints at the begining of the `server.ts` file who will not be triggered on the first fly. If the contributor clicks on restart, then all the breakpoints on the `server` part should be triggered.
+
+- Webpack:
+
+Actually with the current setup, the `actions_list.json` is compiled inside the bundle.
+
+`TODO`: fix bundle issue and remove the `actions_list.json` from the final bundle.
+
+## 📊 Roadmap
+
+- Add debugger support for `Fastfile`
+
 ## 📚 Ressources
 
 - [Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
@@ -31,9 +54,8 @@ This project was bootstaped from the `lsp-example` [repository](https://github.c
 
 ### 🧰 Running project locally
 
-- Run `yarn install` in this folder. This installs all necessary npm modules in both the client and server folder
+- Run `npm install` in this folder. This installs all necessary npm modules in both the client and server folder
 - Open `VS Code` on this folder.
-- Press `Ctrl+Shift+B` to start compiling the client and server in [watch mode](https://code.visualstudio.com/docs/editor/tasks#:~:text=The%20first%20entry%20executes,the%20HelloWorld.js%20file.).
 - Switch to the `Run and Debug` View in the Sidebar (`Ctrl+Shift+D`).
 - Select `Launch Client` from the drop down (if it is not already).
 - Press `▷` to run the launch config (`F5`).
