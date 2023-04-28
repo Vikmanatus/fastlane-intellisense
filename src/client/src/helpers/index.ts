@@ -76,18 +76,6 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
   const htmlFormattedDoc = `
     <head>
       <style>  
-      // .section pre code .hljs-symbol {
-      //   color: #9bcf9f;
-      // }
-      .section pre code .hljs-string {
-        color: #053069;
-      }
-      
-      // .section pre code .hljs-comment {
-      //   color: #f54ce1;
-      //   font-style: italic;
-      // }
-
       .section pre code {
         white-space: pre;
       }
