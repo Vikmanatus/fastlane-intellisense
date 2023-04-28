@@ -40,10 +40,17 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
   if (!parsedDoc.length) {
     return "An error seems to have occured";
   }
-  let documentationContent = "";
+
   parsedDoc.forEach((element) => {
-    documentationContent += element.outerHTML;
+    const imgTags = element.querySelectorAll('img');
+    imgTags.forEach((imgTag) => {
+      const src = imgTag.getAttribute('src');
+      if (src && !src.startsWith('https')) {
+        imgTag.remove();
+      }
+    });
   });
+  const documentationContent = parsedDoc.map(element => element.outerHTML).join('');
 
   return documentationContent;
 }
