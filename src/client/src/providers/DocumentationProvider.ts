@@ -35,9 +35,9 @@ class DocumentationProvider {
         this._documentationContent.shift();
         const contents = this.createMarkdownElement(result);
         this._documentationContent.push(contents.value);
-        this._documentationContent.push(
-          "**Note**: This document has been scrapped from the official fastlane documentation"
-        );
+        // this._documentationContent.push(
+        //   "**Note**: This document has been scrapped from the official fastlane documentation"
+        // );
         this._emitter.fire(this._uri);
       })
       .catch((_err) => {

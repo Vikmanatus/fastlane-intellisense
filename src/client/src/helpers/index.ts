@@ -74,35 +74,14 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
 
   const htmlDoc = parsedDoc.map((element) => element.outerHTML).join("");
   const htmlFormattedDoc = `
-  <!DOCTYPE html>
-  <html lang="en">
     <head>
-      <style>
-        .hljs-symbol {
-          color: #0086b3;
-        }
-        .hljs-string {
-          color: #183691;
-        }
-        .hljs-comment,
-        .hljs-quote {
-          color: #998;
-          font-style: italic;
-        }
-  
+      <style>  
         .section pre code {
           white-space: pre;
-          word-wrap: normal;
-          display: block;
-          padding: 12px;
-          font-size: 12px;
         }
       </style>
     </head>
-    <body>
       ${htmlDoc}
-    </body>
-  </html>  
   `;
   const documentationContent = beautify(htmlFormattedDoc, {
     indent_size: 2,
