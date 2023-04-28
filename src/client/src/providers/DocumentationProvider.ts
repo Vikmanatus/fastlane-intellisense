@@ -26,7 +26,7 @@ class DocumentationProvider {
     const documentationContent = await fetchFastlaneDoc(this._actionName);
     if (documentationContent) {
       this._documentationContent.shift();
-      const contents = new MarkdownString("");
+      const contents = new MarkdownString(documentationContent);
       contents.isTrusted = true;
       contents.supportHtml = true;
       this._documentationContent.push(contents.value);

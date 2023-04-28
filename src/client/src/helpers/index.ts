@@ -34,6 +34,12 @@ export function fileExists(filePath: string): boolean {
   }
 }
 
+export function parseDocumentation(list: Element[]){
+  list.map((element)=>{
+    const node = element;
+    return node;
+  });
+}
 export function fetchFastlaneDoc(actionName: string): Promise<string> {
   return new Promise((resolve, reject) => {
     axios
@@ -41,7 +47,9 @@ export function fetchFastlaneDoc(actionName: string): Promise<string> {
       .then((result) => {
         const testReponse = result;
         const test = new JSDOM(testReponse.data);
-        resolve("fake result");
+        const parsedDoc = Array.from(test.window.document.querySelectorAll('div.section'))[0]?.outerHTML;
+        // parseDocumentation(parsedDoc);
+        resolve(parsedDoc);
       })
       .catch((err) => {
         reject(err);
