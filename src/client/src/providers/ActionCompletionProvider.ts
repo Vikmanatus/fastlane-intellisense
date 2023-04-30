@@ -5,9 +5,12 @@ import {
   CompletionItemKind,
   CompletionItemProvider,
   CompletionList,
+  MarkdownString,
   Position,
   ProviderResult,
+  SnippetString,
   TextDocument,
+  TextEdit,
 } from "vscode";
 
 class ActionDefinitionProvider implements CompletionItemProvider {
@@ -23,14 +26,27 @@ class ActionDefinitionProvider implements CompletionItemProvider {
       .lineAt(position)
       .text.substring(0, position.character);
     if (!linePrefix.endsWith("slack(")) {
-      return undefined;
+      return null;
     }
+    // if it does, provide your completion items
+    const arg1 = new CompletionItem("url", CompletionItemKind.Property);
+    arg1.insertText = new SnippetString("url:${1:url}");
+    arg1.documentation = new MarkdownString("Inserts the url argument");
 
-    return [
-      new CompletionItem("log", CompletionItemKind.Method),
-      new CompletionItem("warn", CompletionItemKind.Method),
-      new CompletionItem("error", CompletionItemKind.Method),
-    ];
+    const arg2 = new CompletionItem("message", CompletionItemKind.Property);
+    arg2.insertText = new SnippetString("message:${1:message}");
+    arg2.documentation = new MarkdownString("Inserts the message argument");
+
+    return [arg1, arg2];
+  }
+  parseArgs(linePrefix: string) {
+    const argPattern = /(\w+):/g;
+    let match;
+    const args = [];
+    while ((match = argPattern.exec(linePrefix)) !== null) {
+      args.push(match[1]);
+    }
+    return args;
   }
 }
 
