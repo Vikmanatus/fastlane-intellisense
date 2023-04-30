@@ -38,7 +38,7 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   }
   generateArgument(argName: string): CompletionItem {
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    arg.insertText = new SnippetString(argName + ": ${1:your_" + argName + "}");
+    arg.insertText = new SnippetString(argName + ": ${1:\"your_" + argName + "\"}");
     arg.documentation = new MarkdownString("Inserts the url argument");
     return arg;
   }
