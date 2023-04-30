@@ -62,7 +62,7 @@ export function activate(context: ExtensionContext) {
     languages.registerCompletionItemProvider(
       "ruby",
       actionCompletionProvider,
-      "("
+      ...["(", ","]
     )
   );
   // If the extension is launched in debug mode then the debug server options are used
