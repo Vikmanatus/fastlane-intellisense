@@ -22,24 +22,24 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
     // get all text until the `position` and check if it reads `console.`
     // and if so then complete if `log`, `warn`, and `error`
-    const linePrefix = document
-      .lineAt(position)
-      .text.substring(0, position.character);
-    const parsedArgs = this.parseArgs(linePrefix);
-    if (parsedArgs.length) {
-      console.log({ parsedArgs });
+    const linePrefix = document.lineAt(position).text.substring(0, position.character);
+    const slackPattern = /slack\s*\(\s*([^)]*)$/;
+    const match = linePrefix.match(slackPattern);
+  
+    if (!match) {
+      return undefined;
     }
-    if (!linePrefix.endsWith("slack(")) {
-      return null;
-    }
-
-    // if it does, provide your completion items
-    const basicArgs = [
-      this.generateArgument("url"),
-      this.generateArgument("message"),
-    ];
-
-    return basicArgs;
+  
+    const existingArgsLine = match[1];
+    const existingArgs = this.parseArgs(existingArgsLine);
+    console.log({ existingArgs });
+  
+    const allArgs = ['url', 'message'];
+    const remainingArgs = allArgs.filter(arg => !existingArgs.includes(arg));
+  
+    const completionItems = remainingArgs.map(arg => this.generateArgument(arg));
+    console.log("returning items", completionItems);
+    return completionItems;
   }
   generateArgument(argName: string): CompletionItem {
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
