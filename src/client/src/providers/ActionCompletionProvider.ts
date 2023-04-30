@@ -100,6 +100,12 @@ class ActionDefinitionProvider implements CompletionItemProvider {
         return new SnippetString(
           configItem.key + ': ${1:"your_' + configItem.key + '"}'
         );
+        case "Array":
+          if(configItem.default_value !== null){
+          console.log("DEFAULT VALUE:", configItem.default_value);
+            return new SnippetString(configItem.key + ": ${1:"+configItem.default_value+"}");
+          }
+          return new SnippetString(configItem.key + ": ${1:[]}");
       default:
         return new SnippetString(
           configItem.key + ': ${1:"your_' + configItem.key + '"}'
