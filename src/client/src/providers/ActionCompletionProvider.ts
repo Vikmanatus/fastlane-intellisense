@@ -65,6 +65,9 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     console.log("returning items", completionItems);
     return completionItems;
   }
+  private isEmpty(obj: object): boolean {
+    return Object.keys(obj).length === 0;
+  }
   private handleConfigDefaultValue(
     configItem: FastlaneConfigType
   ): SnippetString {
@@ -81,11 +84,21 @@ class ActionDefinitionProvider implements CompletionItemProvider {
       case "Fastlane::Boolean":
         if (configItem.default_value !== null) {
           return new SnippetString(
-            configItem.key + ': ${1:' + configItem.default_value + '}'
+            configItem.key + ": ${1:" + configItem.default_value + "}"
           );
         }
+        return new SnippetString(configItem.key + ": ${1:boolean}");
+      case "Hash":
+        if (
+          !!configItem.default_value &&
+          typeof configItem.default_value !== "string" &&
+          typeof configItem.default_value !== "boolean" &&
+          this.isEmpty(configItem.default_value)
+        ) {
+          return new SnippetString(configItem.key + ": ${1:{}}");
+        }
         return new SnippetString(
-          configItem.key + ': ${1:boolean}'
+          configItem.key + ': ${1:"your_' + configItem.key + '"}'
         );
       default:
         return new SnippetString(
