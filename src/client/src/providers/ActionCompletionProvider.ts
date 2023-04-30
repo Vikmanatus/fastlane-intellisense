@@ -25,9 +25,14 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
+    const parsedArgs = this.parseArgs(linePrefix);
+    if (parsedArgs.length) {
+      console.log({ parsedArgs });
+    }
     if (!linePrefix.endsWith("slack(")) {
       return null;
     }
+
     // if it does, provide your completion items
     const basicArgs = [
       this.generateArgument("url"),
@@ -38,7 +43,9 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   }
   generateArgument(argName: string): CompletionItem {
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    arg.insertText = new SnippetString(argName + ": ${1:\"your_" + argName + "\"}");
+    arg.insertText = new SnippetString(
+      argName + ': ${1:"your_' + argName + '"}'
+    );
     arg.documentation = new MarkdownString("Inserts the url argument");
     return arg;
   }
