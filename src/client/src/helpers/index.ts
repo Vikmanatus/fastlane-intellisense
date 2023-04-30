@@ -65,9 +65,9 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
         imgTag.remove();
       }
     });
-    const codesTags = element.querySelectorAll("pre code");
+    const codesTags = element.querySelectorAll("pre code.language-ruby");
     codesTags.forEach((el) => {
-      hljs.highlightBlock(el as HTMLElement);
+      hljs.highlightElement(el as HTMLElement);
     });
     removeComments(element);
   });
