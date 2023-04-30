@@ -30,11 +30,11 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     }
     // if it does, provide your completion items
     const arg1 = new CompletionItem("url", CompletionItemKind.Property);
-    arg1.insertText = new SnippetString("url:${1:url}");
+    arg1.insertText = new SnippetString("url: ${1:your_url}");
     arg1.documentation = new MarkdownString("Inserts the url argument");
 
     const arg2 = new CompletionItem("message", CompletionItemKind.Property);
-    arg2.insertText = new SnippetString("message:${1:message}");
+    arg2.insertText = new SnippetString("message: ${1:your_message}");
     arg2.documentation = new MarkdownString("Inserts the message argument");
 
     return [arg1, arg2];
