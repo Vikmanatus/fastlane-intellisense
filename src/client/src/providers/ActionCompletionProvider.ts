@@ -47,6 +47,9 @@ class ActionDefinitionProvider implements CompletionItemProvider {
       argName + ': ${1:"your_' + argName + '"}'
     );
     arg.documentation = new MarkdownString("Inserts the url argument");
+    //arg.sortText = '00' + argName; // this will put your arguments first
+    arg.filterText =  argName + ': ${1:"your_' + argName + '"}';
+
     return arg;
   }
   parseArgs(linePrefix: string) {
