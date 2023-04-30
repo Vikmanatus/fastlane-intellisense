@@ -82,7 +82,7 @@ class ActionDefinitionProvider implements CompletionItemProvider {
           configItem.key + ': ${1:"your_' + configItem.key + '"}'
         );
       case "Fastlane::Boolean":
-        if (configItem.default_value !== null) {
+        if (typeof configItem.default_value === "boolean") {
           return new SnippetString(
             configItem.key + ": ${1:" + configItem.default_value + "}"
           );
