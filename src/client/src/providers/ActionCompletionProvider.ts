@@ -29,15 +29,18 @@ class ActionDefinitionProvider implements CompletionItemProvider {
       return null;
     }
     // if it does, provide your completion items
-    const arg1 = new CompletionItem("url", CompletionItemKind.Property);
-    arg1.insertText = new SnippetString("url: ${1:your_url}");
-    arg1.documentation = new MarkdownString("Inserts the url argument");
+    const basicArgs = [
+      this.generateArgument("url"),
+      this.generateArgument("message"),
+    ];
 
-    const arg2 = new CompletionItem("message", CompletionItemKind.Property);
-    arg2.insertText = new SnippetString("message: ${1:your_message}");
-    arg2.documentation = new MarkdownString("Inserts the message argument");
-
-    return [arg1, arg2];
+    return basicArgs;
+  }
+  generateArgument(argName: string): CompletionItem {
+    const arg = new CompletionItem(argName, CompletionItemKind.Property);
+    arg.insertText = new SnippetString(argName + ": ${1:your_" + argName + "}");
+    arg.documentation = new MarkdownString("Inserts the url argument");
+    return arg;
   }
   parseArgs(linePrefix: string) {
     const argPattern = /(\w+):/g;
