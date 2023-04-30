@@ -65,15 +65,41 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     console.log("returning items", completionItems);
     return completionItems;
   }
+  private handleConfigDefaultValue(
+    configItem: FastlaneConfigType
+  ): SnippetString {
+    switch (configItem.data_type) {
+      case "String":
+        if (configItem.default_value) {
+          return new SnippetString(
+            configItem.key + ': ${1:"' + configItem.default_value + '"}'
+          );
+        }
+        return new SnippetString(
+          configItem.key + ': ${1:"your_' + configItem.key + '"}'
+        );
+
+      default:
+        return new SnippetString(
+          configItem.key + ': ${1:"your_' + configItem.key + '"}'
+        );
+    }
+  }
   generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    arg.insertText = new SnippetString(
-      argName + ': ${1:"your_' + argName + '"}'
-    );
+    if (fastalneArg.data_type) {
+      arg.insertText = this.handleConfigDefaultValue(fastalneArg);
+    } else {
+      arg.insertText = new SnippetString(
+        argName + ': ${1:"your_' + argName + '"}'
+      );
+    }
+
     if (fastalneArg.description) {
       arg.documentation = new MarkdownString(fastalneArg.description);
     }
+
     //arg.sortText = '00' + argName; // this will put your arguments first
     arg.filterText = argName + ': ${1:"your_' + argName + '"}';
 
