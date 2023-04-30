@@ -1,4 +1,4 @@
-import { actions_list } from '@/shared/src/config';
+import { FastlaneConfigType, actions_list } from "@/shared/src/config";
 import {
   CancellationToken,
   CompletionContext,
@@ -23,10 +23,12 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
     // get all text until the `position` and check if it reads `console.`
     // and if so then complete if `log`, `warn`, and `error`
-    const linePrefix = document.lineAt(position).text.substring(0, position.character);
+    const linePrefix = document
+      .lineAt(position)
+      .text.substring(0, position.character);
     const slackPattern = /slack\s*\(\s*([^)]*)$/;
     const match = linePrefix.match(slackPattern);
-  
+
     if (!match) {
       return null;
     }
@@ -34,36 +36,46 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     const existingArgsLine = match[1];
     const existingArgs = this.parseArgs(existingArgsLine);
     console.log({ existingArgs });
-    const actionPattern = /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
+    const actionPattern =
+      /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
 
     const matchActionName = actionPattern.exec(linePrefix.trim());
     if (!matchActionName || matchActionName.length < 1) {
-      console.log({matchActionName});
+      console.log({ matchActionName });
       return null;
     }
     const extractedActionName = matchActionName[1];
-    const actionElement = actions_list.filter((element)=>element.action_name === extractedActionName);
-    if(!actionElement.length){
+    const actionElement = actions_list.filter(
+      (element) => element.action_name === extractedActionName
+    );
+    if (!actionElement.length) {
       return null;
     }
     const actionArgs = actionElement[0].args;
-    if(!actionArgs){
+    if (!actionArgs) {
       return null;
     }
-    const remainingArgs = actionArgs.filter(arg => !existingArgs.includes(arg.key));
-  
-    const completionItems = remainingArgs.map(arg => this.generateArgument(arg.key));
+    const remainingArgs = actionArgs.filter(
+      (arg) => !existingArgs.includes(arg.key)
+    );
+
+    const completionItems = remainingArgs.map((arg) =>
+      this.generateArgument(arg)
+    );
     console.log("returning items", completionItems);
     return completionItems;
   }
-  generateArgument(argName: string): CompletionItem {
+  generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
+    const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
     arg.insertText = new SnippetString(
       argName + ': ${1:"your_' + argName + '"}'
     );
-    arg.documentation = new MarkdownString("Inserts the url argument");
+    if (fastalneArg.description) {
+      arg.documentation = new MarkdownString(fastalneArg.description);
+    }
     //arg.sortText = '00' + argName; // this will put your arguments first
-    arg.filterText =  argName + ': ${1:"your_' + argName + '"}';
+    arg.filterText = argName + ': ${1:"your_' + argName + '"}';
 
     return arg;
   }
