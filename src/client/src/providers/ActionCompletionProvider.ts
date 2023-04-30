@@ -1,3 +1,4 @@
+import { actions_list } from '@/shared/src/config';
 import {
   CancellationToken,
   CompletionContext,
@@ -27,17 +28,31 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     const match = linePrefix.match(slackPattern);
   
     if (!match) {
-      return undefined;
+      return null;
     }
-  
+
     const existingArgsLine = match[1];
     const existingArgs = this.parseArgs(existingArgsLine);
     console.log({ existingArgs });
+    const actionPattern = /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
+
+    const matchActionName = actionPattern.exec(linePrefix.trim());
+    if (!matchActionName || matchActionName.length < 1) {
+      console.log({matchActionName});
+      return null;
+    }
+    const extractedActionName = matchActionName[1];
+    const actionElement = actions_list.filter((element)=>element.action_name === extractedActionName);
+    if(!actionElement.length){
+      return null;
+    }
+    const actionArgs = actionElement[0].args;
+    if(!actionArgs){
+      return null;
+    }
+    const remainingArgs = actionArgs.filter(arg => !existingArgs.includes(arg.key));
   
-    const allArgs = ['url', 'message'];
-    const remainingArgs = allArgs.filter(arg => !existingArgs.includes(arg));
-  
-    const completionItems = remainingArgs.map(arg => this.generateArgument(arg));
+    const completionItems = remainingArgs.map(arg => this.generateArgument(arg.key));
     console.log("returning items", completionItems);
     return completionItems;
   }
