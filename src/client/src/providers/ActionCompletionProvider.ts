@@ -115,6 +115,13 @@ class ActionDefinitionProvider implements CompletionItemProvider {
           );
         }
         return new SnippetString(configItem.key + ": ${1:[]}");
+      case "Integer":
+        if(typeof configItem.default_value === "number"){
+          return new SnippetString(
+            configItem.key + ": ${1:" + configItem.default_value + "}"
+          );
+        }
+        return new SnippetString( configItem.key + ": ${1:0}");
       default:
         return new SnippetString(
           configItem.key + ': ${1:"your_' + configItem.key + '"}'
