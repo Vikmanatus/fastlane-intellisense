@@ -24,7 +24,7 @@ import {
   VirtualDocumentProvider,
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
-
+import ActionCompletionProvider from "./providers/ActionCompletionProvider";
 // dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
@@ -57,6 +57,14 @@ export function activate(context: ExtensionContext) {
     )
   );
   context.subscriptions.push(virtualDocProvider, virtualProviderRegistration);
+  const actionCompletionProvider = new ActionCompletionProvider();
+  context.subscriptions.push(
+    languages.registerCompletionItemProvider(
+      "ruby",
+      actionCompletionProvider,
+      "("
+    )
+  );
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
