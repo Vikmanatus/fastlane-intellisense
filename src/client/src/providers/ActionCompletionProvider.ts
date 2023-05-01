@@ -26,8 +26,8 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
-    const slackPattern = /slack\s*\(\s*([^)]*)$/;
-    const match = linePrefix.match(slackPattern);
+    const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
+    const match = linePrefix.match(matchAction);
 
     if (!match) {
       return null;
