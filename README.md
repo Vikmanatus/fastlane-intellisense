@@ -30,6 +30,8 @@ For the moment, this extension contains the following features:
 
 `TODO`: Currently the autocompletion for arguments is only supported on single line. Next step is to add detection for multiline.
 
+`TODO`: Fix autocompletion items on server side
+
 ## 📉 Regression
 
 - Debugger:
