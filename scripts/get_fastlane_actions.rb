@@ -105,6 +105,6 @@ merged_hash.delete_if { |action_name, _| !completion_list.any? { |el| el["action
 # Convert the merged_hash back into an array
 merged_list = merged_hash.values
 
-output_file_path = File.expand_path(File.join(__dir__, "..", "src", "shared", "file.json"))
+output_file_path = File.expand_path(File.join(__dir__, "..", "src", "shared", "actions_list.json"))
 
 write_to_json_file(output_file_path, merged_list)

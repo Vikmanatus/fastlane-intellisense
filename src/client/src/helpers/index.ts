@@ -69,6 +69,11 @@ export function parseFastlaneDoc(fastlaneHtmlPage: string): string {
     codesTags.forEach((el) => {
       hljs.highlightElement(el as HTMLElement);
     });
+
+    const untaggedElements = element.querySelectorAll('pre code');
+    untaggedElements.forEach((el) => {
+      hljs.highlightElement(el as HTMLElement);
+    });
     removeComments(element);
   });
 

@@ -35,13 +35,13 @@ class ActionDefinitionProvider implements CompletionItemProvider {
 
     const existingArgsLine = match[1];
     const existingArgs = this.parseArgs(existingArgsLine);
-    console.log({ existingArgs });
+    //console.log({ existingArgs });
     const actionPattern =
       /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
 
     const matchActionName = actionPattern.exec(linePrefix.trim());
     if (!matchActionName || matchActionName.length < 1) {
-      console.log({ matchActionName });
+      //console.log({ matchActionName });
       return null;
     }
     const extractedActionName = matchActionName[1];
@@ -62,7 +62,7 @@ class ActionDefinitionProvider implements CompletionItemProvider {
     const completionItems = remainingArgs.map((arg) =>
       this.generateArgument(arg)
     );
-    console.log("returning items", completionItems);
+    //console.log("returning items", completionItems);
     return completionItems;
   }
   private isEmpty(obj: object): boolean {
@@ -102,7 +102,7 @@ class ActionDefinitionProvider implements CompletionItemProvider {
         );
       case "Array":
         if (Array.isArray(configItem.default_value)) {
-          console.log("DEFAULT VALUE:", configItem.default_value);
+          //console.log("DEFAULT VALUE:", configItem.default_value);
           const defaultValue =
             "[" +
             configItem.default_value
