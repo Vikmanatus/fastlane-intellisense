@@ -5,6 +5,7 @@ import {
   CompletionItem,
   CompletionItemKind,
   CompletionItemProvider,
+  CompletionItemTag,
   CompletionList,
   ExtensionContext,
   MarkdownString,
@@ -82,10 +83,10 @@ class ActionCompletionProvider
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
   }
-  private generateRubyHash(configItem: FastlaneConfigType ): string {
+  private generateRubyHash(configItem: FastlaneConfigType): string {
     const entries = Object.entries(configItem.default_value as object)
-    .map(([key, value]) => `"${key}" => "${value}"`)
-    .join(", ");
+      .map(([key, value]) => `"${key}" => "${value}"`)
+      .join(", ");
     return `${configItem.key}: { ${entries} }`;
   }
   private handleConfigDefaultValue(configItem: FastlaneConfigType) {
@@ -130,20 +131,15 @@ class ActionCompletionProvider
   generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    if (fastalneArg.data_type) {
-      arg.insertText = this.handleConfigDefaultValue(fastalneArg);
-    } else {
-      arg.insertText = new SnippetString(
-        argName + ': ${1:"your_' + argName + '"}'
-      );
-    }
-
+    const defaultValues = this.handleConfigDefaultValue(fastalneArg);
+    arg.insertText = defaultValues;
     if (fastalneArg.description) {
       arg.documentation = new MarkdownString(fastalneArg.description);
+      if (fastalneArg.description.match(/\*\*DEPRECATED!\*\*/)) {
+        arg.tags = [CompletionItemTag.Deprecated];
+      }
     }
-
-    arg.filterText = argName + ': ${1:"your_' + argName + '"}';
-
+    arg.filterText = defaultValues.value;
     return arg;
   }
   parseArgs(linePrefix: string) {
