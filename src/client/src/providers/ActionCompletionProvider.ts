@@ -83,14 +83,10 @@ class ActionCompletionProvider
     return Object.keys(obj).length === 0;
   }
   private generateRubyHash(configItem: FastlaneConfigType ): string {
-    let defaultValue = `${configItem.key}: { `;
-    for (const [key, value] of Object.entries(
-      configItem.default_value as object
-    )) {
-      defaultValue += `"${key}" => "${value}",`;
-    }
-    defaultValue += " }";
-    return defaultValue;
+    const entries = Object.entries(configItem.default_value as object)
+    .map(([key, value]) => `"${key}" => "${value}"`)
+    .join(", ");
+    return `${configItem.key}: { ${entries} }`;
   }
   private handleConfigDefaultValue(configItem: FastlaneConfigType) {
     let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
