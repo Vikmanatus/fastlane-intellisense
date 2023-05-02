@@ -82,65 +82,37 @@ class ActionCompletionProvider
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
   }
-  private handleConfigDefaultValue(
-    configItem: FastlaneConfigType
-  ): SnippetString {
+  private handleConfigDefaultValue(configItem: FastlaneConfigType) {
+    let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
+
     switch (configItem.data_type) {
       case "String":
-        if (configItem.default_value) {
-          return new SnippetString(
-            configItem.key + ': ${1:"' + configItem.default_value + '"}'
-          );
-        }
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
-      case "Fastlane::Boolean":
-        if (typeof configItem.default_value === "boolean") {
-          return new SnippetString(
-            configItem.key + ": ${1:" + configItem.default_value + "}"
-          );
-        }
-        return new SnippetString(configItem.key + ": ${1:boolean}");
       case "Hash":
         if (
-          !!configItem.default_value &&
-          typeof configItem.default_value !== "string" &&
-          typeof configItem.default_value !== "boolean" &&
-          this.isEmpty(configItem.default_value)
+          configItem.default_value &&
+          typeof configItem.default_value !== "boolean"
         ) {
-          return new SnippetString(configItem.key + ": ${1:{}}");
+          defaultValue = configItem.key + ": ${1:" + configItem.default_value + "}";
         }
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
+        break;
+      case "Fastlane::Boolean":
+      case "Integer":
+        if (typeof configItem.default_value !== "undefined") {
+          defaultValue = configItem.key + ": ${1:" + configItem.default_value + "}";
+        }
+        break;
       case "Array":
         if (Array.isArray(configItem.default_value)) {
-          //console.log("DEFAULT VALUE:", configItem.default_value);
-          const defaultValue =
-            "[" +
-            configItem.default_value
-              .map((value: string) => `"${value}"`)
-              .join(", ") +
-            "]";
-
-          return new SnippetString(
-            configItem.key + ": ${1:" + defaultValue + "}"
-          );
+          const defaultValueArray = configItem.default_value
+            .map((value: string) => `"${value}"`)
+            .join(", ");
+          defaultValue = configItem.key + ": ${1:[" + defaultValueArray + "]}";
+          break;
         }
-        return new SnippetString(configItem.key + ": ${1:[]}");
-      case "Integer":
-        if (typeof configItem.default_value === "number") {
-          return new SnippetString(
-            configItem.key + ": ${1:" + configItem.default_value + "}"
-          );
-        }
-        return new SnippetString(configItem.key + ": ${1:0}");
-      default:
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
+        defaultValue = configItem.key + ": ${1:[]}";
+        break;
     }
+    return new SnippetString(defaultValue);
   }
   generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
     const argName = fastalneArg.key;
@@ -157,7 +129,6 @@ class ActionCompletionProvider
       arg.documentation = new MarkdownString(fastalneArg.description);
     }
 
-    //arg.sortText = '00' + argName; // this will put your arguments first
     arg.filterText = argName + ': ${1:"your_' + argName + '"}';
 
     return arg;
