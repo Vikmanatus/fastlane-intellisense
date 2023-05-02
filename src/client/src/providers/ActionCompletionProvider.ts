@@ -6,12 +6,14 @@ import {
   CompletionItemKind,
   CompletionItemProvider,
   CompletionList,
+  ExtensionContext,
   MarkdownString,
   Position,
   ProviderResult,
   SnippetString,
   TextDocument,
   TextEdit,
+  languages,
 } from "vscode";
 import Provider from "../logic/Provider";
 
@@ -22,6 +24,11 @@ class ActionCompletionProvider
   public init(): boolean {
     console.log("Initializing ActionCompletionProvider");
     return true;
+  }
+  public registerProvider(context: ExtensionContext): void {
+    context.subscriptions.push(
+      languages.registerCompletionItemProvider("ruby", this, ...["(", ","])
+    );
   }
   provideCompletionItems(
     document: TextDocument,

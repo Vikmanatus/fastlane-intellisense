@@ -30,7 +30,7 @@ import { CommandsManager } from "./logic/CommandsManager";
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function  activate(context: ExtensionContext) {
   const commandManagerInstance = new CommandsManager();
   commandManagerInstance.init();
   const serverPath = path.join("dist", "server.js");

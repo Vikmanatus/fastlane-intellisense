@@ -1,11 +1,13 @@
 import {
   CancellationToken,
   DefinitionProvider,
+  ExtensionContext,
   Location,
   Position,
   Range,
   TextDocument,
   Uri,
+  languages,
   workspace,
 } from "vscode";
 import Provider from "../logic/Provider";
@@ -16,7 +18,14 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     console.log("Initializing ActionDefinitionProvider");
 
     return true;
-
+  }
+  public registerProvider(context: ExtensionContext): void {
+    context.subscriptions.push(
+      languages.registerDefinitionProvider(
+        { scheme: "file", language: "ruby" },
+        this
+      )
+    );
   }
   private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");
@@ -47,7 +56,7 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
         targetDocument,
         convertToClassName(text_element)
       );
-      if(!targetPosition){
+      if (!targetPosition) {
         return null;
       }
       return Promise.resolve(

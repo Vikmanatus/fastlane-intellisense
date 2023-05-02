@@ -1,3 +1,4 @@
+import { ExtensionContext, languages } from "vscode";
 import {
   ActionCompletionProvider,
   ActionDefinitionProvider,
@@ -14,7 +15,7 @@ interface ProviderTypes {
   actionCompletion: ActionCompletionProvider;
   docHover: DocHoverProvider;
   actionDefinition: ActionDefinitionProvider;
-  virtualDocument: VirtualDocumentProvider
+  virtualDocument: VirtualDocumentProvider;
 }
 
 interface ProviderInterface {
@@ -25,8 +26,7 @@ export enum PROVIDERS {
   actionCompletion = "actionCompletion",
   docHover = "docHover",
   actionDefinition = "actionDefinition",
-  virtualDocument =" virtualDocument"
-
+  virtualDocument = "virtualDocument",
 }
 
 class ProvidersManager {
@@ -38,7 +38,7 @@ class ProvidersManager {
       [PROVIDERS.actionCompletion]: ActionCompletionProvider,
       [PROVIDERS.actionDefinition]: ActionDefinitionProvider,
       [PROVIDERS.docHover]: DocHoverProvider,
-      [PROVIDERS.virtualDocument]: VirtualDocumentProvider
+      [PROVIDERS.virtualDocument]: VirtualDocumentProvider,
     };
     this.providers = {};
   }
@@ -78,8 +78,8 @@ class ProvidersManager {
     return null;
   }
 
-  initProvider(serviceName: string): Promise<boolean> | boolean {
-    const provider = this.getProvider(serviceName);
+  initProvider(providerName: string): Promise<boolean> | boolean {
+    const provider = this.getProvider(providerName);
 
     if (!provider) {
       return false;
@@ -87,10 +87,12 @@ class ProvidersManager {
     const promise = provider.init();
     return promise;
   }
-  
+  registerProviders(context: ExtensionContext) {}
   public init() {
     const promises = [];
-
+    // Firstly we will simply setup the providers
+    // If they have an init method, it will be runned to setup all the required provider logic
+    // After that, we will launch another function to setup and push the provider inside the context of the extension
     for (const providerName in this.providerClasses) {
       const provider = this.initProvider(providerName);
       if (provider !== false) {
@@ -102,7 +104,6 @@ class ProvidersManager {
       console.log({ results });
     });
   }
-
 }
 
 ProvidersManager._instance = null;
