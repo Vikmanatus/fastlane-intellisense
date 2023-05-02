@@ -14,7 +14,7 @@ import {
   TextEdit,
 } from "vscode";
 
-class ActionDefinitionProvider implements CompletionItemProvider {
+class ActionCompletionProvider implements CompletionItemProvider {
   provideCompletionItems(
     document: TextDocument,
     position: Position,
@@ -159,4 +159,4 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   }
 }
 
-export default ActionDefinitionProvider;
+export default ActionCompletionProvider;

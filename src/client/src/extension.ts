@@ -22,9 +22,10 @@ import {
   DocHoverProvider,
   ActionDefinitionProvider,
   VirtualDocumentProvider,
+  ActionCompletionProvider
 } from "./providers";
 import { CommandsManager } from "./logic/CommandsManager";
-import ActionCompletionProvider from "./providers/ActionCompletionProvider";
+
 // dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
