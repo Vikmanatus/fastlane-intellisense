@@ -11,7 +11,7 @@ import {
 import Provider from "../logic/Provider";
 import { FastlaneConfigType, actions_list } from "@/shared/src/config";
 
-export class DocHoverProvider extends Provider implements HoverProvider {
+class DocHoverProvider extends Provider implements HoverProvider {
   private actionMap: Map<string, MarkdownString>;
   private argMap: Map<string, FastlaneConfigType>;
   constructor() {
