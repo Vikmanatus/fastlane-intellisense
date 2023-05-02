@@ -82,6 +82,16 @@ class ActionCompletionProvider
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
   }
+  private generateRubyHash(configItem: FastlaneConfigType ): string {
+    let defaultValue = `${configItem.key}: { `;
+    for (const [key, value] of Object.entries(
+      configItem.default_value as object
+    )) {
+      defaultValue += `"${key}" => "${value}",`;
+    }
+    defaultValue += " }";
+    return defaultValue;
+  }
   private handleConfigDefaultValue(configItem: FastlaneConfigType) {
     let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
 
@@ -94,13 +104,7 @@ class ActionCompletionProvider
               defaultValue = configItem.key + ": ${1:{}}";
               break;
             }
-            defaultValue = `${configItem.key}: { `;
-            for (const [key, value] of Object.entries(
-              configItem.default_value
-            )) {
-              defaultValue += `"${key}" => "${value}",`;
-            }
-            defaultValue += " }";
+            defaultValue = this.generateRubyHash(configItem);
             break;
           }
           defaultValue =
