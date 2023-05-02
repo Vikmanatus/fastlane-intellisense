@@ -10,7 +10,7 @@ export type FastlaneConfigType = {
   key: string;
   env_name: string | null;
   description: string | null;
-  default_value: boolean | string | null | any;
+  default_value: boolean | string | null |string[]| Record<never, never>;
   optional: boolean | null;
   is_string: boolean | null;
   data_type: string | null;
