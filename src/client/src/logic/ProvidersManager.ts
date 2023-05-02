@@ -1,4 +1,4 @@
-import { ExtensionContext, languages } from "vscode";
+import { ExtensionContext, commands, languages } from "vscode";
 import {
   ActionCompletionProvider,
   ActionDefinitionProvider,
@@ -6,6 +6,7 @@ import {
   VirtualDocumentProvider,
 } from "../providers";
 import Provider from "./Provider";
+import { CommandsManager } from './CommandsManager';
 
 interface ProviderClassesInterface {
   [key: string]: typeof Provider;
@@ -94,6 +95,16 @@ class ProvidersManager {
         provider.registerProvider(context);
       }
     }
+    this.registerCommands(context);
+  }
+  registerCommands(context: ExtensionContext){
+    const commandManagerInstance = new CommandsManager();
+    commandManagerInstance.init();
+    commandManagerInstance.getCommandList().forEach((element) => {
+      context.subscriptions.push(
+        commands.registerCommand(element.command, element.commandHandler)
+      );
+    });
   }
   public init() {
     const promises = [];

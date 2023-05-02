@@ -32,13 +32,12 @@ import ProvidersManager from "./logic/ProvidersManager";
 let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
-  const commandManagerInstance = new CommandsManager();
-  commandManagerInstance.init();
   const serverPath = path.join("dist", "server.js");
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(serverPath);
 
   const providersManager = new ProvidersManager();
+
   providersManager
     .init()
     .then(() => {
@@ -69,12 +68,6 @@ export async function activate(context: ExtensionContext) {
         serverOptions,
         clientOptions
       );
-
-      commandManagerInstance.getCommandList().forEach((element) => {
-        context.subscriptions.push(
-          commands.registerCommand(element.command, element.commandHandler)
-        );
-      });
 
       client.start();
       window.showInformationMessage("My extension is now active!");
