@@ -1,19 +1,29 @@
 import {
   CancellationToken,
+  ExtensionContext,
   HoverProvider,
   MarkdownString,
   Position,
   TextDocument,
   Uri,
+  languages,
 } from "vscode";
 import Provider from "../logic/Provider";
-import { actions_list } from '@/shared/src/config';
+import { actions_list } from "@/shared/src/config";
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   public init(): boolean {
     console.log("Initializing DocHoverProvider");
 
     return true;
+  }
+  public registerProvider(context: ExtensionContext): void {
+    context.subscriptions.push(
+      languages.registerHoverProvider(
+        { language: "ruby", scheme: "file" },
+        this
+      )
+    );
   }
   provideHover(
     document: TextDocument,

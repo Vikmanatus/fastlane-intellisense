@@ -87,7 +87,14 @@ class ProvidersManager {
     const promise = provider.init();
     return promise;
   }
-  registerProviders(context: ExtensionContext) {}
+  registerProviders(context: ExtensionContext) {
+    for (const providerName in this.providerClasses) {
+      const provider = this.getProvider(providerName);
+      if (provider) {
+        provider.registerProvider(context);
+      }
+    }
+  }
   public init() {
     const promises = [];
     // Firstly we will simply setup the providers
