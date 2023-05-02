@@ -44,7 +44,7 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     for (let i = 0; i < document.lineCount; i++) {
       const line = document.lineAt(i);
       const match = line.text.match(regex);
-      if (match?.index) {
+      if (match && match.index) {
         return new Position(i, match.index);
       }
     }
