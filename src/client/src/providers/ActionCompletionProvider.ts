@@ -88,17 +88,30 @@ class ActionCompletionProvider
     switch (configItem.data_type) {
       case "String":
       case "Hash":
-        if (
-          configItem.default_value &&
-          typeof configItem.default_value !== "boolean"
-        ) {
-          defaultValue = configItem.key + ": ${1:" + configItem.default_value + "}";
+        if (configItem.default_value) {
+          if (typeof configItem.default_value === "object") {
+            if (this.isEmpty(configItem.default_value)) {
+              defaultValue = configItem.key + ": ${1:{}}";
+              break;
+            }
+            defaultValue = `${configItem.key}: { `;
+            for (const [key, value] of Object.entries(
+              configItem.default_value
+            )) {
+              defaultValue += `"${key}" => "${value}",`;
+            }
+            defaultValue += " }";
+            break;
+          }
+          defaultValue =
+            configItem.key + ': ${1:"' + configItem.default_value + '"}';
         }
         break;
       case "Fastlane::Boolean":
       case "Integer":
         if (typeof configItem.default_value !== "undefined") {
-          defaultValue = configItem.key + ": ${1:" + configItem.default_value + "}";
+          defaultValue =
+            configItem.key + ": ${1:" + configItem.default_value + "}";
         }
         break;
       case "Array":
