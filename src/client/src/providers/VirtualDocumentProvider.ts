@@ -24,6 +24,11 @@ class VirtualDocumentProvider
       console.log("doc closed");
     });
   }
+  public init(): boolean {
+    console.log("Initializing VirtualDocumentProvider");
+
+    return true;
+  }
   dispose() {
     this._subscriptions.dispose();
     // this._documents.clear();
@@ -47,7 +52,11 @@ class VirtualDocumentProvider
     if (doc) {
       return doc.value;
     }
-    const documentationDoc = new DocumentationProvider(uri, this._onDidChange, uri.query);
+    const documentationDoc = new DocumentationProvider(
+      uri,
+      this._onDidChange,
+      uri.query
+    );
     this._documents.set(uri.toString(), documentationDoc);
     return documentationDoc.value;
   }

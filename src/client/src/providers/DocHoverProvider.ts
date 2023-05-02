@@ -11,6 +11,8 @@ import { actions_list } from '@/shared/src/config';
 
 export class DocHoverProvider extends Provider implements HoverProvider {
   public init(): boolean {
+    console.log("Initializing DocHoverProvider");
+
     return true;
   }
   provideHover(

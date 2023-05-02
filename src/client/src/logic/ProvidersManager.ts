@@ -2,6 +2,7 @@ import {
   ActionCompletionProvider,
   ActionDefinitionProvider,
   DocHoverProvider,
+  VirtualDocumentProvider,
 } from "../providers";
 import Provider from "./Provider";
 
@@ -13,6 +14,7 @@ interface ProviderTypes {
   actionCompletion: ActionCompletionProvider;
   docHover: DocHoverProvider;
   actionDefinition: ActionDefinitionProvider;
+  virtualDocument: VirtualDocumentProvider
 }
 
 interface ProviderInterface {
@@ -23,6 +25,8 @@ export enum PROVIDERS {
   actionCompletion = "actionCompletion",
   docHover = "docHover",
   actionDefinition = "actionDefinition",
+  virtualDocument =" virtualDocument"
+
 }
 
 class ProvidersManager {
@@ -34,9 +38,18 @@ class ProvidersManager {
       [PROVIDERS.actionCompletion]: ActionCompletionProvider,
       [PROVIDERS.actionDefinition]: ActionDefinitionProvider,
       [PROVIDERS.docHover]: DocHoverProvider,
+      [PROVIDERS.virtualDocument]: VirtualDocumentProvider
     };
     this.providers = {};
   }
+
+  static getInstance() {
+    if (!ProvidersManager._instance) {
+      ProvidersManager._instance = new ProvidersManager();
+    }
+    return ProvidersManager._instance;
+  }
+
   getProviders(...services: PROVIDERS[]): ProviderTypes {
     return Object.values(services).reduce((acc, serviceName: string) => {
       const service = this.getProvider(serviceName);
@@ -90,12 +103,6 @@ class ProvidersManager {
     });
   }
 
-  static getInstance() {
-    if (!ProvidersManager._instance) {
-      ProvidersManager._instance = new ProvidersManager();
-    }
-    return ProvidersManager._instance;
-  }
 }
 
 ProvidersManager._instance = null;

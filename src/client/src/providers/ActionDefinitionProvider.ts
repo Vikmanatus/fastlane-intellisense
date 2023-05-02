@@ -13,7 +13,10 @@ import { convertToClassName, fileExists } from "../helpers";
 
 class ActionDefinitionProvider extends Provider implements DefinitionProvider {
   public init(): boolean {
+    console.log("Initializing ActionDefinitionProvider");
+
     return true;
+
   }
   private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");

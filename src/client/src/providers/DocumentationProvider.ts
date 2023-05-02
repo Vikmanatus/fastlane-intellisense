@@ -1,5 +1,6 @@
 import { EventEmitter, MarkdownString, Uri } from "vscode";
 import { fetchFastlaneDoc, parseFastlaneDoc } from "../helpers";
+import Provider from '../logic/Provider';
 
 class DocumentationProvider {
   
@@ -22,9 +23,7 @@ class DocumentationProvider {
     // Start with printing an temporary message while we fecth the documentation
     this._fetchDocumentation();
   }
-  public init(): boolean {
-    return true;
-  }
+
   private createMarkdownElement(content:string): MarkdownString{
     const contents = new MarkdownString(content);
     contents.isTrusted = true;

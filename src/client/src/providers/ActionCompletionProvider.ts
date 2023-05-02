@@ -20,6 +20,7 @@ class ActionCompletionProvider
   implements CompletionItemProvider
 {
   public init(): boolean {
+    console.log("Initializing ActionCompletionProvider");
     return true;
   }
   provideCompletionItems(
