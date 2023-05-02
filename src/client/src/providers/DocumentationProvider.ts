@@ -1,6 +1,5 @@
 import { EventEmitter, MarkdownString, Uri } from "vscode";
 import { fetchFastlaneDoc, parseFastlaneDoc } from "../helpers";
-import Provider from '../logic/Provider';
 
 class DocumentationProvider {
   

@@ -1,14 +1,5 @@
-console.warn("EXTENSION FILE RUNNING");
-
 import * as path from "path";
-import {
-  workspace,
-  ExtensionContext,
-  languages,
-  window,
-  commands,
-  Disposable,
-} from "vscode";
+import { workspace, ExtensionContext, window } from "vscode";
 
 import {
   LanguageClient,
@@ -18,20 +9,13 @@ import {
 } from "vscode-languageclient/node";
 
 // import * as dotenv from "dotenv";
-import {
-  DocHoverProvider,
-  ActionDefinitionProvider,
-  VirtualDocumentProvider,
-  ActionCompletionProvider,
-} from "./providers";
-import { CommandsManager } from "./logic/CommandsManager";
 import ProvidersManager from "./logic/ProvidersManager";
 
 // dotenv.config({ path: path.join(__dirname, "../.env") });
 
 let client: LanguageClient;
 
-export async function activate(context: ExtensionContext) {
+export function activate(context: ExtensionContext) {
   const serverPath = path.join("dist", "server.js");
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(serverPath);

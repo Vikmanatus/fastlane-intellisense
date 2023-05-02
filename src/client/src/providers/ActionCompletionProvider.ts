@@ -12,7 +12,6 @@ import {
   ProviderResult,
   SnippetString,
   TextDocument,
-  TextEdit,
   languages,
 } from "vscode";
 import Provider from "../logic/Provider";
