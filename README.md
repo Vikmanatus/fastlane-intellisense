@@ -26,11 +26,15 @@ For the moment, this extension contains the following features:
 
 ✅ Development and production bundles handled by `Webpack`
 
+✅ Providing arguments documentation when hovering on action's arguments
+
 `In Progress`: Autocompletion for actions argument, providing default value if speicified in `fastlane` action config item.
 
 `TODO`: Currently the autocompletion for arguments is only supported on single line. Next step is to add detection for multiline.
 
 `TODO`: Fix autocompletion items on server side
+
+`TODO`: Sometimes when hovering documentation, some arguments values can have the same name as some actions. Fix required.
 
 ## 📉 Regression
 

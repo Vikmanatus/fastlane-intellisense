@@ -5,16 +5,31 @@ import {
   CompletionItem,
   CompletionItemKind,
   CompletionItemProvider,
+  CompletionItemTag,
   CompletionList,
+  ExtensionContext,
   MarkdownString,
   Position,
   ProviderResult,
   SnippetString,
   TextDocument,
-  TextEdit,
+  languages,
 } from "vscode";
+import Provider from "../logic/Provider";
 
-class ActionDefinitionProvider implements CompletionItemProvider {
+class ActionCompletionProvider
+  extends Provider
+  implements CompletionItemProvider
+{
+  public init(): boolean {
+    console.log("Initializing ActionCompletionProvider");
+    return true;
+  }
+  public registerProvider(context: ExtensionContext): void {
+    context.subscriptions.push(
+      languages.registerCompletionItemProvider("ruby", this, ...["(", ","])
+    );
+  }
   provideCompletionItems(
     document: TextDocument,
     position: Position,
@@ -68,84 +83,63 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
   }
-  private handleConfigDefaultValue(
-    configItem: FastlaneConfigType
-  ): SnippetString {
+  private generateRubyHash(configItem: FastlaneConfigType): string {
+    const entries = Object.entries(configItem.default_value as object)
+      .map(([key, value]) => `"${key}" => "${value}"`)
+      .join(", ");
+    return `${configItem.key}: { ${entries} }`;
+  }
+  private handleConfigDefaultValue(configItem: FastlaneConfigType) {
+    let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
+
     switch (configItem.data_type) {
       case "String":
-        if (configItem.default_value) {
-          return new SnippetString(
-            configItem.key + ': ${1:"' + configItem.default_value + '"}'
-          );
-        }
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
-      case "Fastlane::Boolean":
-        if (typeof configItem.default_value === "boolean") {
-          return new SnippetString(
-            configItem.key + ": ${1:" + configItem.default_value + "}"
-          );
-        }
-        return new SnippetString(configItem.key + ": ${1:boolean}");
       case "Hash":
-        if (
-          !!configItem.default_value &&
-          typeof configItem.default_value !== "string" &&
-          typeof configItem.default_value !== "boolean" &&
-          this.isEmpty(configItem.default_value)
-        ) {
-          return new SnippetString(configItem.key + ": ${1:{}}");
+        if (configItem.default_value) {
+          if (typeof configItem.default_value === "object") {
+            if (this.isEmpty(configItem.default_value)) {
+              defaultValue = configItem.key + ": ${1:{}}";
+              break;
+            }
+            defaultValue = this.generateRubyHash(configItem);
+            break;
+          }
+          defaultValue =
+            configItem.key + ': ${1:"' + configItem.default_value + '"}';
         }
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
+        break;
+      case "Fastlane::Boolean":
+      case "Integer":
+        if (typeof configItem.default_value !== "undefined") {
+          defaultValue =
+            configItem.key + ": ${1:" + configItem.default_value + "}";
+        }
+        break;
       case "Array":
         if (Array.isArray(configItem.default_value)) {
-          //console.log("DEFAULT VALUE:", configItem.default_value);
-          const defaultValue =
-            "[" +
-            configItem.default_value
-              .map((value: string) => `"${value}"`)
-              .join(", ") +
-            "]";
-
-          return new SnippetString(
-            configItem.key + ": ${1:" + defaultValue + "}"
-          );
+          const defaultValueArray = configItem.default_value
+            .map((value: string) => `"${value}"`)
+            .join(", ");
+          defaultValue = configItem.key + ": ${1:[" + defaultValueArray + "]}";
+          break;
         }
-        return new SnippetString(configItem.key + ": ${1:[]}");
-      case "Integer":
-        if(typeof configItem.default_value === "number"){
-          return new SnippetString(
-            configItem.key + ": ${1:" + configItem.default_value + "}"
-          );
-        }
-        return new SnippetString( configItem.key + ": ${1:0}");
-      default:
-        return new SnippetString(
-          configItem.key + ': ${1:"your_' + configItem.key + '"}'
-        );
+        defaultValue = configItem.key + ": ${1:[]}";
+        break;
     }
+    return new SnippetString(defaultValue);
   }
   generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    if (fastalneArg.data_type) {
-      arg.insertText = this.handleConfigDefaultValue(fastalneArg);
-    } else {
-      arg.insertText = new SnippetString(
-        argName + ': ${1:"your_' + argName + '"}'
-      );
-    }
-
+    const defaultValues = this.handleConfigDefaultValue(fastalneArg);
+    arg.insertText = defaultValues;
     if (fastalneArg.description) {
       arg.documentation = new MarkdownString(fastalneArg.description);
+      if (fastalneArg.description.match(/\*\*DEPRECATED!\*\*/)) {
+        arg.tags = [CompletionItemTag.Deprecated];
+      }
     }
-
-    //arg.sortText = '00' + argName; // this will put your arguments first
-    arg.filterText = argName + ': ${1:"your_' + argName + '"}';
-
+    arg.filterText = defaultValues.value;
     return arg;
   }
   parseArgs(linePrefix: string) {
@@ -159,4 +153,4 @@ class ActionDefinitionProvider implements CompletionItemProvider {
   }
 }
 
-export default ActionDefinitionProvider;
+export default ActionCompletionProvider;

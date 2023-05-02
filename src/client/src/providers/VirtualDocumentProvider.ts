@@ -2,6 +2,7 @@ import {
   CancellationToken,
   Disposable,
   EventEmitter,
+  ExtensionContext,
   TextDocumentContentProvider,
   Uri,
   workspace,
@@ -23,6 +24,20 @@ class VirtualDocumentProvider
     this._subscriptions = workspace.onDidCloseTextDocument((_doc) => {
       console.log("doc closed");
     });
+  }
+  public registerProvider(context: ExtensionContext): void {
+    const virtualProviderRegistration = Disposable.from(
+      workspace.registerTextDocumentContentProvider(
+        "fastlane-intellisense-doc",
+        this
+      )
+    );
+    context.subscriptions.push(this, virtualProviderRegistration);
+  }
+  public init(): boolean {
+    console.log("Initializing VirtualDocumentProvider");
+
+    return true;
   }
   dispose() {
     this._subscriptions.dispose();
@@ -47,7 +62,11 @@ class VirtualDocumentProvider
     if (doc) {
       return doc.value;
     }
-    const documentationDoc = new DocumentationProvider(uri, this._onDidChange, uri.query);
+    const documentationDoc = new DocumentationProvider(
+      uri,
+      this._onDidChange,
+      uri.query
+    );
     this._documents.set(uri.toString(), documentationDoc);
     return documentationDoc.value;
   }

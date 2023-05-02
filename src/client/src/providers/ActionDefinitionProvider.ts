@@ -1,23 +1,50 @@
 import {
   CancellationToken,
   DefinitionProvider,
+  ExtensionContext,
   Location,
   Position,
   Range,
   TextDocument,
   Uri,
+  languages,
   workspace,
 } from "vscode";
 import Provider from "../logic/Provider";
-import { convertToClassName, fileExists } from "../helpers";
+import { convertToClassName } from "../helpers";
+import { actions_list } from "@/shared/src/config";
 
 class ActionDefinitionProvider extends Provider implements DefinitionProvider {
+  private actionDefinitionMap: Map<string, string>;
+
+  constructor() {
+    super();
+    this.actionDefinitionMap = new Map();
+  }
+  public init(): boolean {
+    console.log("Initializing ActionDefinitionProvider");
+    if (actions_list.length > 0) {
+      for (const action of actions_list) {
+        this.actionDefinitionMap.set(action.action_name, action.file_path);
+      }
+    }
+
+    return true;
+  }
+  public registerProvider(context: ExtensionContext): void {
+    context.subscriptions.push(
+      languages.registerDefinitionProvider(
+        { scheme: "file", language: "ruby" },
+        this
+      )
+    );
+  }
   private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");
     for (let i = 0; i < document.lineCount; i++) {
       const line = document.lineAt(i);
       const match = line.text.match(regex);
-      if (match?.index) {
+      if (match && match.index) {
         return new Position(i, match.index);
       }
     }
@@ -32,21 +59,20 @@ class ActionDefinitionProvider extends Provider implements DefinitionProvider {
     const range = document.lineAt(position).range;
     const text_element = document.getText(range).trim();
     // TODO: Fix path handling with path provided in actions list
-    const targetPath = `/Users/vikmanatus/.rvm/gems/ruby-2.7.5/gems/fastlane-2.212.1/fastlane/lib/fastlane/actions/${text_element}.rb`;
-    const file_exists = fileExists(targetPath);
+    const actionPath = this.actionDefinitionMap.get(text_element);
 
-    if (file_exists) {
-      const targetDocument = await workspace.openTextDocument(targetPath);
+    if (actionPath) {
+      const targetDocument = await workspace.openTextDocument(actionPath);
       const targetPosition = this.findFunctionDefinition(
         targetDocument,
         convertToClassName(text_element)
       );
-      if(!targetPosition){
+      if (!targetPosition) {
         return null;
       }
       return Promise.resolve(
         new Location(
-          Uri.file(targetPath),
+          Uri.file(actionPath),
           new Range(targetPosition, targetPosition)
         )
       );

@@ -1,7 +1,7 @@
 import {
   setupConfigCommmandHandler,
   setupVirtualDocumentCommandHandler,
-} from "../helpers/commands";
+} from "./commands";
 import Manager from "./Manager";
 
 export type CommandHandlerType = {
