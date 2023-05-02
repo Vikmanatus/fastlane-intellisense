@@ -13,8 +13,15 @@ import {
   TextDocument,
   TextEdit,
 } from "vscode";
+import Provider from "../logic/Provider";
 
-class ActionCompletionProvider implements CompletionItemProvider {
+class ActionCompletionProvider
+  extends Provider
+  implements CompletionItemProvider
+{
+  public init(): boolean {
+    return true;
+  }
   provideCompletionItems(
     document: TextDocument,
     position: Position,
@@ -116,12 +123,12 @@ class ActionCompletionProvider implements CompletionItemProvider {
         }
         return new SnippetString(configItem.key + ": ${1:[]}");
       case "Integer":
-        if(typeof configItem.default_value === "number"){
+        if (typeof configItem.default_value === "number") {
           return new SnippetString(
             configItem.key + ": ${1:" + configItem.default_value + "}"
           );
         }
-        return new SnippetString( configItem.key + ": ${1:0}");
+        return new SnippetString(configItem.key + ": ${1:0}");
       default:
         return new SnippetString(
           configItem.key + ': ${1:"your_' + configItem.key + '"}'

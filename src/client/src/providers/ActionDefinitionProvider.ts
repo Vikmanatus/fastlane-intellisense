@@ -12,6 +12,9 @@ import Provider from "../logic/Provider";
 import { convertToClassName, fileExists } from "../helpers";
 
 class ActionDefinitionProvider extends Provider implements DefinitionProvider {
+  public init(): boolean {
+    return true;
+  }
   private findFunctionDefinition(document: TextDocument, actionName: string) {
     const regex = new RegExp(`\\b${actionName}\\b`, "i");
     for (let i = 0; i < document.lineCount; i++) {

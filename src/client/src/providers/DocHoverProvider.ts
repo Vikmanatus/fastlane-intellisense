@@ -10,6 +10,9 @@ import Provider from "../logic/Provider";
 import { actions_list } from '@/shared/src/config';
 
 export class DocHoverProvider extends Provider implements HoverProvider {
+  public init(): boolean {
+    return true;
+  }
   provideHover(
     document: TextDocument,
     position: Position,
