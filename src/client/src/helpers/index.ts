@@ -1,4 +1,3 @@
-import { accessSync, constants } from "fs";
 import axios from "axios";
 import { JSDOM } from "jsdom";
 import { html as beautify } from "js-beautify";
@@ -24,15 +23,6 @@ interface Action {
   path: string;
 }
 
-export function fileExists(filePath: string): boolean {
-  try {
-    // Check if the file exists
-    accessSync(filePath, constants.F_OK);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
 function removeComments(node: ChildNode) {
   let i = 0;
   const children = node.childNodes;
