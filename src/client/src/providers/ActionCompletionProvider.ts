@@ -150,16 +150,15 @@ class ActionCompletionProvider
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
-    const completionItems = this.singleLineSearch(linePrefix);
-    if (!completionItems) {
-      // If there is no results for the singleLineSearch we fallback to multiline search
-      console.log("going for multiline search");
-      const multileSearchItems = this.multilineSearch(document, position);
-      if(multileSearchItems){
-        return multileSearchItems;
+      let completionItems = this.singleLineSearch(linePrefix);
+
+      if (!completionItems) {
+        console.log("going for multiline search");
+        completionItems = this.multilineSearch(document, position);
       }
-    }
-    return completionItems;
+    
+      // Ensure that we always return an array
+      return completionItems ?? [];
   }
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
