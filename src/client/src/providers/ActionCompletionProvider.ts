@@ -40,22 +40,30 @@ class ActionCompletionProvider
     // get all text until the `position` and check if it reads `console.`
     // and if so then complete if `log`, `warn`, and `error`
     const linePrefix = document
-    .lineAt(position)
-    .text.substring(0, position.character);
+      .lineAt(position)
+      .text.substring(0, position.character);
     const actionName = "slack";
-    const regex =new RegExp(`\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`, 'gm');
+    const regex = new RegExp(
+      `\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
+      "gm"
+    );
     //Math.max(0, position.line - 1)
-    const matchMulti = document.getText(new Range(position.line - 1, 0, document.lineCount, 0)).match(regex);
-    console.log({matchMulti});
+    const matchMulti = document
+      .getText(new Range(position.line - 1, 0, document.lineCount, 0))
+      .match(regex);
+    console.log({ matchMulti });
     if (matchMulti) {
+      // TODO: fix - if the completion handler is triggered on a new line with nothing on it, it does not match anything
       const functionBlock = matchMulti[0];
-      console.log({functionBlock});
+      console.log({ functionBlock });
       const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
       const actionName = actionNameMatch ? actionNameMatch[1] : null;
       console.log({ actionName });
-      // Now you can do something with functionBlock...
+      if (actionName) {
+        const existingArgs = this.parseMultilineArgs(functionBlock);
+        console.log({ existingArgs });
+      }
     }
-
 
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
     const match = linePrefix.match(matchAction);
@@ -66,7 +74,7 @@ class ActionCompletionProvider
 
     const existingArgsLine = match[1];
     const existingArgs = this.parseArgs(existingArgsLine);
-    //console.log({ existingArgs });
+    // console.log({ existingArgs });
     const actionPattern =
       /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
 
@@ -157,6 +165,15 @@ class ActionCompletionProvider
     }
     arg.filterText = defaultValues.value;
     return arg;
+  }
+  parseMultilineArgs(functionBlock: string) {
+    const argPattern = /(\w+)\s*:/g;
+    let match;
+    const args = [];
+    while ((match = argPattern.exec(functionBlock)) !== null) {
+      args.push(match[1]);
+    }
+    return args;
   }
   parseArgs(linePrefix: string) {
     const argPattern = /(\w+):/g;
