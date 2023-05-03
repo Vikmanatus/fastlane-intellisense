@@ -31,17 +31,7 @@ class ActionCompletionProvider
       languages.registerCompletionItemProvider("ruby", this, ...["(", ","])
     );
   }
-  provideCompletionItems(
-    document: TextDocument,
-    position: Position,
-    token: CancellationToken,
-    context: CompletionContext
-  ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
-    // get all text until the `position` and check if it reads `console.`
-    // and if so then complete if `log`, `warn`, and `error`
-    const linePrefix = document
-      .lineAt(position)
-      .text.substring(0, position.character);
+  private multilineSearch(document: TextDocument, position: Position) {
     const actionName = "slack";
     const regex = new RegExp(
       `\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
@@ -64,6 +54,18 @@ class ActionCompletionProvider
         console.log({ existingArgs });
       }
     }
+  }
+  provideCompletionItems(
+    document: TextDocument,
+    position: Position,
+    token: CancellationToken,
+    context: CompletionContext
+  ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
+    // get all text until the `position` and check if it reads `console.`
+    // and if so then complete if `log`, `warn`, and `error`
+    const linePrefix = document
+      .lineAt(position)
+      .text.substring(0, position.character);
 
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
     const match = linePrefix.match(matchAction);
