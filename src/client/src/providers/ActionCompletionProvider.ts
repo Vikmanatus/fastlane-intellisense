@@ -37,9 +37,9 @@ class ActionCompletionProvider
     );
   }
   private multilineSearch(document: TextDocument, position: Position) {
-    const actionName = "slack";
+    const actionNameTest = "slack";
     const regex = new RegExp(
-      `\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
+      `\\b${actionNameTest}\\s*\\(\\s*([\\s\\S]*?)\\)`,
       "gm"
     );
     //Math.max(0, position.line - 1)
@@ -55,39 +55,43 @@ class ActionCompletionProvider
       )
       .match(regex);
     console.log({ matchMulti });
-    if (matchMulti) {
-      const functionBlock = matchMulti[0];
-      console.log({ functionBlock });
-      const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
-      const actionName = actionNameMatch ? actionNameMatch[1] : null;
-      console.log({ actionName });
-      if (actionName) {
-        const multilineArgs = this.parseMultilineArgs(functionBlock);
-        console.log({ multilineArgs });
-        const blockHeight = this.getBlockHeight(functionBlock);
-        this.multilineBlockLength = blockHeight;
-        console.log({ blockHeight });
-        const actionElement = actions_list.filter(
-          (element) => element.action_name === actionName
-        );
-        if (!actionElement.length) {
-          return null;
-        }
-
-        const actionArgs = actionElement[0].args;
-        if (!actionArgs) {
-          return null;
-        }
-        const remainingArgs = actionArgs.filter(
-          (arg) => !multilineArgs.includes(arg.key)
-        );
-
-        const completionItems = remainingArgs.map((arg) =>
-          this.generateArgument(arg)
-        );
-        return completionItems;
-      }
+    if (!matchMulti) {
+      return null;
     }
+
+    const functionBlock = matchMulti[0];
+    console.log({ functionBlock });
+    const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
+    const actionName = actionNameMatch ? actionNameMatch[1] : null;
+    console.log({ actionName });
+    if (!actionName) {
+      return null;
+    }
+
+    const multilineArgs = this.parseMultilineArgs(functionBlock);
+    console.log({ multilineArgs });
+    const blockHeight = this.getBlockHeight(functionBlock);
+    this.multilineBlockLength = blockHeight;
+    console.log({ blockHeight });
+    const actionElement = actions_list.filter(
+      (element) => element.action_name === actionName
+    );
+    if (!actionElement.length) {
+      return null;
+    }
+    console.log("FOUND MATCHING ELEMENT");
+    const actionArgs = actionElement[0].args;
+    if (!actionArgs) {
+      return null;
+    }
+    const remainingArgs = actionArgs.filter(
+      (arg) => !multilineArgs.includes(arg.key)
+    );
+    console.log({remainingArgs});
+    const completionItems = remainingArgs.map((arg) =>
+      this.generateArgument(arg)
+    );
+    return completionItems;
   }
   private getBlockHeight(block: string): number {
     const matches = block.match(/\n/g);
@@ -150,7 +154,10 @@ class ActionCompletionProvider
     if (!completionItems) {
       // If there is no results for the singleLineSearch we fallback to multiline search
       console.log("going for multiline search");
-      this.multilineSearch(document, position);
+      const multileSearchItems = this.multilineSearch(document, position);
+      if(multileSearchItems){
+        return multileSearchItems;
+      }
     }
     return completionItems;
   }
