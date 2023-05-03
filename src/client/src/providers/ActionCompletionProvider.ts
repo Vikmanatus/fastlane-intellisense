@@ -11,6 +11,7 @@ import {
   MarkdownString,
   Position,
   ProviderResult,
+  Range,
   SnippetString,
   TextDocument,
   languages,
@@ -39,8 +40,20 @@ class ActionCompletionProvider
     // get all text until the `position` and check if it reads `console.`
     // and if so then complete if `log`, `warn`, and `error`
     const linePrefix = document
-      .lineAt(position)
-      .text.substring(0, position.character);
+    .lineAt(position)
+    .text.substring(0, position.character);
+    const actionName = "slack";
+    const regex =new RegExp(`\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`, 'gm');
+    //Math.max(0, position.line - 1)
+    const matchMulti = document.getText(new Range(position.line - 1, 0, document.lineCount, 0)).match(regex);
+    console.log({matchMulti});
+    if (matchMulti) {
+      const functionBlock = matchMulti[0];
+      console.log({functionBlock});
+      // Now you can do something with functionBlock...
+    }
+
+
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
     const match = linePrefix.match(matchAction);
 
