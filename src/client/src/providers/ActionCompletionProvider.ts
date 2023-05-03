@@ -55,20 +55,10 @@ class ActionCompletionProvider
       }
     }
   }
-  provideCompletionItems(
-    document: TextDocument,
-    position: Position,
-    token: CancellationToken,
-    context: CompletionContext
-  ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
-    // get all text until the `position` and check if it reads `console.`
-    // and if so then complete if `log`, `warn`, and `error`
-    const linePrefix = document
-      .lineAt(position)
-      .text.substring(0, position.character);
+  private singleLineSearch(searchItem:string) {
 
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
-    const match = linePrefix.match(matchAction);
+    const match = searchItem.match(matchAction);
 
     if (!match) {
       return null;
@@ -76,13 +66,11 @@ class ActionCompletionProvider
 
     const existingArgsLine = match[1];
     const existingArgs = this.parseArgs(existingArgsLine);
-    // console.log({ existingArgs });
     const actionPattern =
       /(\b[a-z]+(?:_[a-z]+)*\b)(?=\s*\(|\s*\(\s*\)|\s*\(\s*\w+\s*:\s*\w+\s*(?:,\s*\w+\s*:\s*\w+\s*)*\)|$)/;
 
-    const matchActionName = actionPattern.exec(linePrefix.trim());
+    const matchActionName = actionPattern.exec(searchItem.trim());
     if (!matchActionName || matchActionName.length < 1) {
-      //console.log({ matchActionName });
       return null;
     }
     const extractedActionName = matchActionName[1];
@@ -103,7 +91,20 @@ class ActionCompletionProvider
     const completionItems = remainingArgs.map((arg) =>
       this.generateArgument(arg)
     );
-    //console.log("returning items", completionItems);
+    return completionItems;
+  }
+  provideCompletionItems(
+    document: TextDocument,
+    position: Position,
+    token: CancellationToken,
+    context: CompletionContext
+  ): ProviderResult<CompletionItem[] | CompletionList<CompletionItem>> {
+    // get all text until the `position` and check if it reads `console.`
+    // and if so then complete if `log`, `warn`, and `error`
+    const linePrefix = document
+      .lineAt(position)
+      .text.substring(0, position.character);
+    const completionItems = this.singleLineSearch(linePrefix);
     return completionItems;
   }
   private isEmpty(obj: object): boolean {
