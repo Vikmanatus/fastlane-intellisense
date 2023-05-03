@@ -48,12 +48,12 @@ class ActionCompletionProvider
       "gm"
     );
     //Math.max(0, position.line - 1)
+    // TODO: fix to do - Issue with text range
     const matchMulti = document
-      .getText(new Range(position.line - 1, 0, document.lineCount, 0))
+      .getText(new Range(position.line - 5, 0, document.lineCount, 0))
       .match(regex);
     console.log({ matchMulti });
     if (matchMulti) {
-      // TODO: fix - if the completion handler is triggered on a new line with nothing on it, it does not match anything
       const functionBlock = matchMulti[0];
       console.log({ functionBlock });
       const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
