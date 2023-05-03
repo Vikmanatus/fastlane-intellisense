@@ -50,6 +50,9 @@ class ActionCompletionProvider
     if (matchMulti) {
       const functionBlock = matchMulti[0];
       console.log({functionBlock});
+      const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
+      const actionName = actionNameMatch ? actionNameMatch[1] : null;
+      console.log({ actionName });
       // Now you can do something with functionBlock...
     }
 
