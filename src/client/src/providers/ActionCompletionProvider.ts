@@ -45,7 +45,14 @@ class ActionCompletionProvider
     //Math.max(0, position.line - 1)
     // TODO: fix to do - Issue with text range
     const matchMulti = document
-      .getText(new Range(position.line - this.multilineBlockLength, 0, document.lineCount, 0))
+      .getText(
+        new Range(
+          position.line - this.multilineBlockLength,
+          0,
+          document.lineCount,
+          0
+        )
+      )
       .match(regex);
     console.log({ matchMulti });
     if (matchMulti) {
@@ -59,19 +66,37 @@ class ActionCompletionProvider
         console.log({ multilineArgs });
         const blockHeight = this.getBlockHeight(functionBlock);
         this.multilineBlockLength = blockHeight;
-        console.log({blockHeight});
+        console.log({ blockHeight });
+        const actionElement = actions_list.filter(
+          (element) => element.action_name === actionName
+        );
+        if (!actionElement.length) {
+          return null;
+        }
+
+        const actionArgs = actionElement[0].args;
+        if (!actionArgs) {
+          return null;
+        }
+        const remainingArgs = actionArgs.filter(
+          (arg) => !multilineArgs.includes(arg.key)
+        );
+
+        const completionItems = remainingArgs.map((arg) =>
+          this.generateArgument(arg)
+        );
+        return completionItems;
       }
     }
   }
   private getBlockHeight(block: string): number {
     const matches = block.match(/\n/g);
     // If there are no matches, it means that the block is a single line,
-    // so we return 1. Otherwise, we add 1 to the number of matches because 
+    // so we return 1. Otherwise, we add 1 to the number of matches because
     // there is one more line than there are line breaks.
     return matches ? matches.length + 1 : 1;
-}
-  private singleLineSearch(searchItem:string) {
-
+  }
+  private singleLineSearch(searchItem: string) {
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
     const match = searchItem.match(matchAction);
 
@@ -106,7 +131,7 @@ class ActionCompletionProvider
     const completionItems = remainingArgs.map((arg) =>
       this.generateArgument(arg)
     );
-    console.log({existingArgs});
+    console.log({ existingArgs });
     this.multilineBlockLength = existingArgs.length;
     return completionItems;
   }
@@ -122,10 +147,10 @@ class ActionCompletionProvider
       .lineAt(position)
       .text.substring(0, position.character);
     const completionItems = this.singleLineSearch(linePrefix);
-    if(!completionItems){
+    if (!completionItems) {
       // If there is no results for the singleLineSearch we fallback to multiline search
       console.log("going for multiline search");
-      this.multilineSearch(document,position);
+      this.multilineSearch(document, position);
     }
     return completionItems;
   }
