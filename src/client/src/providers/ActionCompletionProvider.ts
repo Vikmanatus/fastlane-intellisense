@@ -170,8 +170,8 @@ class ActionCompletionProvider
     return `${configItem.key}: { ${entries} }`;
   }
   private handleConfigDefaultValue(configItem: FastlaneConfigType, lineBreakRequired = false) {
-    let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
     const lineBreak = lineBreakRequired ? '\n' : '';
+    let defaultValue = lineBreak + configItem.key + ': ${1:"your_' + configItem.key + '"}';
 
     switch (configItem.data_type) {
       case "String":
@@ -210,6 +210,7 @@ class ActionCompletionProvider
     return new SnippetString(defaultValue);
   }
   generateArgument(fastalneArg: FastlaneConfigType, lineBreakRequired = false): CompletionItem {
+    // Issue with fastalneArg.data_type "String" when string template "your_value" is displayed the linebreak is not triggered
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
     const defaultValues = this.handleConfigDefaultValue(fastalneArg, lineBreakRequired);
