@@ -89,7 +89,7 @@ class ActionCompletionProvider
     );
     console.log({remainingArgs});
     const completionItems = remainingArgs.map((arg) =>
-      this.generateArgument(arg)
+      this.generateArgument(arg, true)
     );
     return completionItems;
   }
@@ -169,8 +169,9 @@ class ActionCompletionProvider
       .join(", ");
     return `${configItem.key}: { ${entries} }`;
   }
-  private handleConfigDefaultValue(configItem: FastlaneConfigType) {
+  private handleConfigDefaultValue(configItem: FastlaneConfigType, lineBreakRequired = false) {
     let defaultValue = configItem.key + ': ${1:"your_' + configItem.key + '"}';
+    const lineBreak = lineBreakRequired ? '\n' : '';
 
     switch (configItem.data_type) {
       case "String":
@@ -178,21 +179,21 @@ class ActionCompletionProvider
         if (configItem.default_value) {
           if (typeof configItem.default_value === "object") {
             if (this.isEmpty(configItem.default_value)) {
-              defaultValue = configItem.key + ": ${1:{}}";
+              defaultValue = lineBreak + configItem.key + ": ${1:{}}";
               break;
             }
-            defaultValue = this.generateRubyHash(configItem);
+            defaultValue = lineBreak + this.generateRubyHash(configItem);
             break;
           }
           defaultValue =
-            configItem.key + ': ${1:"' + configItem.default_value + '"}';
+          lineBreak + configItem.key + ': ${1:"' + configItem.default_value + '"}';
         }
         break;
       case "Fastlane::Boolean":
       case "Integer":
         if (typeof configItem.default_value !== "undefined") {
           defaultValue =
-            configItem.key + ": ${1:" + configItem.default_value + "}";
+          lineBreak + configItem.key + ": ${1:" + configItem.default_value + "}";
         }
         break;
       case "Array":
@@ -200,18 +201,18 @@ class ActionCompletionProvider
           const defaultValueArray = configItem.default_value
             .map((value: string) => `"${value}"`)
             .join(", ");
-          defaultValue = configItem.key + ": ${1:[" + defaultValueArray + "]}";
+          defaultValue = lineBreak + configItem.key + ": ${1:[" + defaultValueArray + "]}";
           break;
         }
-        defaultValue = configItem.key + ": ${1:[]}";
+        defaultValue = lineBreak + configItem.key + ": ${1:[]}";
         break;
     }
     return new SnippetString(defaultValue);
   }
-  generateArgument(fastalneArg: FastlaneConfigType): CompletionItem {
+  generateArgument(fastalneArg: FastlaneConfigType, lineBreakRequired = false): CompletionItem {
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    const defaultValues = this.handleConfigDefaultValue(fastalneArg);
+    const defaultValues = this.handleConfigDefaultValue(fastalneArg, lineBreakRequired);
     arg.insertText = defaultValues;
     if (fastalneArg.description) {
       arg.documentation = new MarkdownString(fastalneArg.description);
