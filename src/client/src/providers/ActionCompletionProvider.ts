@@ -88,8 +88,9 @@ class ActionCompletionProvider
       (arg) => !multilineArgs.includes(arg.key)
     );
     console.log({remainingArgs});
+    const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
     const completionItems = remainingArgs.map((arg) =>
-      this.generateArgument(arg)
+      this.generateArgument(arg,isLineBreakRequired)
     );
       if(context.triggerCharacter){
         console.log("CHARACTER TRIGGERED");
