@@ -33,10 +33,10 @@ class ActionCompletionProvider
   }
   public registerProvider(context: ExtensionContext): void {
     context.subscriptions.push(
-      languages.registerCompletionItemProvider("ruby", this, ...["(", ","])
+      languages.registerCompletionItemProvider("ruby", this, ...["(", ",", "\n"])
     );
   }
-  private multilineSearch(document: TextDocument, position: Position) {
+  private multilineSearch(document: TextDocument, position: Position, context: CompletionContext) {
     const actionNameTest = "slack";
     const regex = new RegExp(
       `\\b${actionNameTest}\\s*\\(\\s*([\\s\\S]*?)\\)`,
@@ -89,8 +89,12 @@ class ActionCompletionProvider
     );
     console.log({remainingArgs});
     const completionItems = remainingArgs.map((arg) =>
-      this.generateArgument(arg, true)
+      this.generateArgument(arg)
     );
+      if(context.triggerCharacter){
+        console.log("CHARACTER TRIGGERED");
+        console.log({triggerCharacter:context.triggerCharacter });
+      }
     return completionItems;
   }
   private getBlockHeight(block: string): number {
@@ -154,7 +158,7 @@ class ActionCompletionProvider
 
       if (!completionItems) {
         console.log("going for multiline search");
-        completionItems = this.multilineSearch(document, position);
+        completionItems = this.multilineSearch(document, position, context);
       }
     
       // Ensure that we always return an array
