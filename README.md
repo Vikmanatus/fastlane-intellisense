@@ -26,7 +26,7 @@ For the moment, this extension contains the following features:
 
 ✅ Development and production bundles handled by `Webpack`
 
-✅ Providing arguments documentation when hovering on action's arguments
+✅ Providing documentation when hovering on action's arguments if available
 
 `In Progress`: Autocompletion for actions argument, providing default value if speicified in `fastlane` action config item.
 
