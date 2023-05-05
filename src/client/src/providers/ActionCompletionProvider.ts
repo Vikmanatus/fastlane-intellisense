@@ -44,6 +44,8 @@ class ActionCompletionProvider
     );
     //Math.max(0, position.line - 1)
     // TODO: fix to do - Issue with text range
+    const syntaxValidationRegex = /(?:\w+\s*:\s*\S+\s*,\s*)+\)/;
+
     const matchMulti = document
       .getText(
         new Range(
@@ -60,7 +62,12 @@ class ActionCompletionProvider
     }
 
     const functionBlock = matchMulti[0];
-    console.log({ functionBlock });
+    if (!syntaxValidationRegex.test(functionBlock)) {
+      console.warn("Invalid syntax");
+      console.warn({ functionBlock });
+      return null;
+    }
+    // console.log({ functionBlock });
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
     console.log({ actionName });
