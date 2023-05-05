@@ -42,6 +42,13 @@ class ActionCompletionProvider
       )
     );
   }
+  private checkActionSyntax(actionBlock: string) {
+    const syntaxValidationRegex =
+      // eslint-disable-next-line no-useless-escape
+      /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
+
+    return syntaxValidationRegex.test(actionBlock);
+  }
   private multilineSearch(
     document: TextDocument,
     position: Position,
@@ -52,25 +59,19 @@ class ActionCompletionProvider
       flags: "gm",
     };
     const regex = new RegExp(regexConfig.regex, regexConfig.flags);
-    //Math.max(0, position.line - 1)
-    // TODO: fix to do - Issue with text range
-    const syntaxValidationRegex =
-      // eslint-disable-next-line no-useless-escape
-      /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
-
     const startingLine = position.line - this.multilineBlockLength;
     const endingLine = document.lineCount;
 
-    const matchMulti = document
+    const matchMultilineInput = document
       .getText(new Range(startingLine, 0, endingLine, 0))
       .match(regex);
 
-    if (!matchMulti) {
+    if (!matchMultilineInput) {
       return null;
     }
 
-    const functionBlock = matchMulti[0];
-    if (!syntaxValidationRegex.test(functionBlock)) {
+    const functionBlock = matchMultilineInput[0];
+    if (!this.checkActionSyntax(functionBlock)) {
       return null;
     }
 
@@ -82,6 +83,7 @@ class ActionCompletionProvider
     }
 
     const multilineArgs = this.parseMultilineArgs(functionBlock);
+    // TODO: fix to do - Issue with text range
     this.multilineBlockLength = this.getBlockHeight(functionBlock);
     const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
 
