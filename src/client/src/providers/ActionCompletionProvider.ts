@@ -44,7 +44,9 @@ class ActionCompletionProvider
     );
     //Math.max(0, position.line - 1)
     // TODO: fix to do - Issue with text range
-    const syntaxValidationRegex = /(?:\w+\s*:\s*\S+\s*,\s*)+\)/;
+    // eslint-disable-next-line no-useless-escape
+    const syntaxValidationRegex = /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
+
 
     const matchMulti = document
       .getText(
