@@ -74,7 +74,6 @@ class ActionCompletionProvider
     if (!this.checkActionSyntax(functionBlock)) {
       return null;
     }
-
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
 
