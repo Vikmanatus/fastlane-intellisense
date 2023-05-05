@@ -54,17 +54,15 @@ class ActionCompletionProvider
     position: Position,
     context: CompletionContext
   ) {
-    const regexConfig = {
-      regex: `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
-      flags: "gm",
-    };
-    const regex = new RegExp(regexConfig.regex, regexConfig.flags);
     const startingLine = position.line - this.multilineBlockLength;
     const endingLine = document.lineCount;
+    const range = new Range(startingLine, 0, endingLine, 0);
 
-    const matchMultilineInput = document
-      .getText(new Range(startingLine, 0, endingLine, 0))
-      .match(regex);
+    const matchMultilineInput = this.matchMultilineInput(
+      document,
+      range,
+      this.actionName
+    );
 
     if (!matchMultilineInput) {
       return null;
