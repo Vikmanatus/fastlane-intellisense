@@ -116,7 +116,8 @@ class ActionCompletionProvider
     return completionItems;
   }
   private singleLineSearch(searchItem: string) {
-    const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
+    const matchAction = /[a-z_]+\s*\(\s*([^)]*)\s*\)$/;
+
     const match = searchItem.match(matchAction);
 
     if (!match) {
