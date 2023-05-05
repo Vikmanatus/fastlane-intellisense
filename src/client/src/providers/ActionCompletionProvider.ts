@@ -47,10 +47,11 @@ class ActionCompletionProvider
     position: Position,
     context: CompletionContext
   ) {
-    const regex = new RegExp(
-      `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
-      "gm"
-    );
+    const regexConfig = {
+      regex: `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
+      flags: "gm",
+    };
+    const regex = new RegExp(regexConfig.regex, regexConfig.flags);
     //Math.max(0, position.line - 1)
     // TODO: fix to do - Issue with text range
     const syntaxValidationRegex =
@@ -81,10 +82,7 @@ class ActionCompletionProvider
     }
 
     const multilineArgs = this.parseMultilineArgs(functionBlock);
-
-    const blockHeight = this.getBlockHeight(functionBlock);
-    this.multilineBlockLength = blockHeight;
-
+    this.multilineBlockLength = this.getBlockHeight(functionBlock);
     const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
 
     return this.getCompletionItems(
