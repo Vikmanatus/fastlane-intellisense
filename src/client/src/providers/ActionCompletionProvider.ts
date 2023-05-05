@@ -23,9 +23,11 @@ class ActionCompletionProvider
   implements CompletionItemProvider
 {
   private multilineBlockLength: number;
+  private actionName: string;
   constructor() {
     super();
     this.multilineBlockLength = 0;
+    this.actionName = "";
   }
   public init(): boolean {
     console.log("Initializing ActionCompletionProvider");
@@ -37,9 +39,9 @@ class ActionCompletionProvider
     );
   }
   private multilineSearch(document: TextDocument, position: Position, context: CompletionContext) {
-    const actionNameTest = "slack";
+    console.log({searchWord: this.actionName});
     const regex = new RegExp(
-      `\\b${actionNameTest}\\s*\\(\\s*([\\s\\S]*?)\\)`,
+      `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
       "gm"
     );
     //Math.max(0, position.line - 1)
@@ -132,6 +134,7 @@ class ActionCompletionProvider
       return null;
     }
     const extractedActionName = matchActionName[1];
+    this.actionName = extractedActionName;
     const actionElement = actions_list.filter(
       (element) => element.action_name === extractedActionName
     );
