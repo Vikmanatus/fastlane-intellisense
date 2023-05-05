@@ -7,6 +7,7 @@ import {
   TextDocument,
   Uri,
   languages,
+  Range,
 } from "vscode";
 import Provider from "../logic/Provider";
 import { FastlaneConfigType, actions_list } from "@/shared/src/config";
@@ -60,24 +61,8 @@ class DocHoverProvider extends Provider implements HoverProvider {
     position: Position,
     _token: CancellationToken
   ) {
-    const range = document.getWordRangeAtPosition(position);
-    const word = document.getText(range).trim();
-    const matchAction = this.actionMap.get(word);
-    const matchArg = this.argMap.get(word);
-
-    if (matchAction) {
-      return {
-        contents: [matchAction],
-        range,
-      };
-    }
-    if (matchArg && matchArg.description) {
-      const contents = new MarkdownString(matchArg.description);
-      return {
-        contents: [contents],
-        range,
-      };
-    }
+    const currentLine = document.lineAt(position.line).text;
+    console.log({currentLine});
     return null;
   }
 }
