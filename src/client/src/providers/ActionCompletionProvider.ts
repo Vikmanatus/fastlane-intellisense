@@ -39,7 +39,6 @@ class ActionCompletionProvider
     );
   }
   private multilineSearch(document: TextDocument, position: Position, context: CompletionContext) {
-    console.log({searchWord: this.actionName});
     const regex = new RegExp(
       `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
       "gm"
@@ -60,7 +59,7 @@ class ActionCompletionProvider
         )
       )
       .match(regex);
-    console.log({ matchMulti });
+
     if (!matchMulti) {
       return null;
     }
@@ -71,26 +70,26 @@ class ActionCompletionProvider
       console.warn({ functionBlock });
       return null;
     }
-    // console.log({ functionBlock });
+
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
-    console.log({ actionName });
+
     if (!actionName) {
       return null;
     }
 
     const multilineArgs = this.parseMultilineArgs(functionBlock);
-    console.log({ multilineArgs });
+
     const blockHeight = this.getBlockHeight(functionBlock);
     this.multilineBlockLength = blockHeight;
-    console.log({ blockHeight });
+
     const actionElement = actions_list.filter(
       (element) => element.action_name === actionName
     );
     if (!actionElement.length) {
       return null;
     }
-    console.log("FOUND MATCHING ELEMENT");
+
     const actionArgs = actionElement[0].args;
     if (!actionArgs) {
       return null;
@@ -98,15 +97,11 @@ class ActionCompletionProvider
     const remainingArgs = actionArgs.filter(
       (arg) => !multilineArgs.includes(arg.key)
     );
-    console.log({remainingArgs});
+
     const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
     const completionItems = remainingArgs.map((arg) =>
       this.generateArgument(arg,isLineBreakRequired)
     );
-      if(context.triggerCharacter){
-        console.log("CHARACTER TRIGGERED");
-        console.log({triggerCharacter:context.triggerCharacter });
-      }
     return completionItems;
   }
   private getBlockHeight(block: string): number {
@@ -152,7 +147,7 @@ class ActionCompletionProvider
     const completionItems = remainingArgs.map((arg) =>
       this.generateArgument(arg)
     );
-    console.log({ existingArgs });
+
     this.multilineBlockLength = existingArgs.length;
     return completionItems;
   }
@@ -170,7 +165,6 @@ class ActionCompletionProvider
       let completionItems = this.singleLineSearch(linePrefix);
 
       if (!completionItems) {
-        console.log("going for multiline search");
         completionItems = this.multilineSearch(document, position, context);
       }
     
