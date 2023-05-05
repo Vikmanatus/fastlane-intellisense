@@ -57,15 +57,11 @@ class ActionCompletionProvider
       // eslint-disable-next-line no-useless-escape
       /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
 
+    const startingLine = position.line - this.multilineBlockLength;
+    const endingLine = document.lineCount;
+
     const matchMulti = document
-      .getText(
-        new Range(
-          position.line - this.multilineBlockLength,
-          0,
-          document.lineCount,
-          0
-        )
-      )
+      .getText(new Range(startingLine, 0, endingLine, 0))
       .match(regex);
 
     if (!matchMulti) {
@@ -74,8 +70,6 @@ class ActionCompletionProvider
 
     const functionBlock = matchMulti[0];
     if (!syntaxValidationRegex.test(functionBlock)) {
-      console.warn("Invalid syntax");
-      console.warn({ functionBlock });
       return null;
     }
 
