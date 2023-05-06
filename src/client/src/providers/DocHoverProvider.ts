@@ -68,45 +68,47 @@ class DocHoverProvider extends Provider implements HoverProvider {
     const regex = /[a-z_]+\s*\(\s*([^)]*)\s*\)$/m;
     const matchAction = document.getText(documentRange).match(regex);
 
-    if (matchAction) {
-      const functionBlock = matchAction[0];
-      const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
-      const actionName = actionNameMatch ? actionNameMatch[1] : null;
-
-      if (!actionName) {
-        return null;
-      }
-      const range = document.getWordRangeAtPosition(position);
-      const word = document.getText(range).trim();
-      const isHoveredActionName = word === actionName ? true : false;
-      if (isHoveredActionName) {
-        // If we managed to get here, it means that the hovered word is contained into a fastlane action block and corresponds to the action name
-        const matchAction = this.actionMap.get(word);
-        if (!matchAction) {
-          return null;
-        }
-        return {
-          contents: [matchAction],
-          range,
-        };
-      }
-      // Need to check if the hovered word corresponds to the match
-      const multilineArgs = this.parseMultilineArgs(functionBlock);
-
-      const matchArg = multilineArgs.filter((element) => element === word);
-      if (matchArg.length < 1) {
-        return null;
-      }
-      // If we are here, it mean thaht the hovered word is matching one of the arguments of the action, so we can safely display the doc
-      const arg = this.argMap.get(word);
-      if (arg && arg.description) {
-        const contents = new MarkdownString(arg.description);
-        return {
-          contents: [contents],
-          range,
-        };
-      }
+    if (!matchAction) {
+      return null;
     }
+    const functionBlock = matchAction[0];
+    const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
+    const actionName = actionNameMatch ? actionNameMatch[1] : null;
+
+    if (!actionName) {
+      return null;
+    }
+    const range = document.getWordRangeAtPosition(position);
+    const word = document.getText(range).trim();
+    const isHoveredActionName = word === actionName ? true : false;
+    if (isHoveredActionName) {
+      // If we managed to get here, it means that the hovered word is contained into a fastlane action block and corresponds to the action name
+      const matchAction = this.actionMap.get(word);
+      if (!matchAction) {
+        return null;
+      }
+      return {
+        contents: [matchAction],
+        range,
+      };
+    }
+    // Need to check if the hovered word corresponds to the match
+    const multilineArgs = this.parseMultilineArgs(functionBlock);
+
+    const matchArg = multilineArgs.filter((element) => element === word);
+    if (matchArg.length < 1) {
+      return null;
+    }
+    // If we are here, it mean thaht the hovered word is matching one of the arguments of the action, so we can safely display the doc
+    const arg = this.argMap.get(word);
+    if (arg && arg.description) {
+      const contents = new MarkdownString(arg.description);
+      return {
+        contents: [contents],
+        range,
+      };
+    }
+
     // If we are here it means thaht the hovered term is not in an action with arguments
 
     return null;
