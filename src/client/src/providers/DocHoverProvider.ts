@@ -63,23 +63,39 @@ class DocHoverProvider extends Provider implements HoverProvider {
     }
     return matchActionName[1];
   }
+  private findMatchInDocument(document: TextDocument, position: Position, regex: RegExp): string | null {
+    let startingLine = position.line;
+    const endingLine = document.lineCount;
+    let functionBlock = null;
+  
+    while (startingLine >= 0) {
+      const documentRange = new Range(startingLine, 0, endingLine, 0);
+      const textBlock = document.getText(documentRange);
+      console.log(textBlock);
+      const matchAction = textBlock.match(regex);
+  
+      if (matchAction) {
+        functionBlock = matchAction[0];
+        break;
+      }
+  
+      startingLine--;
+    }
+  
+    return functionBlock;
+  }
   provideHover(
     document: TextDocument,
     position: Position,
     _token: CancellationToken
   ) {
     // const currentLine = document.lineAt(position.line).text;
-    const startingLine = position.line;
-    const endingLine = document.lineCount;
-    const documentRange = new Range(startingLine, 0, endingLine, 0);
     const regex = /[a-z_]+\s*\(\s*([^)]*)\s*\)$/m;
-    const textBlock = document.getText(documentRange);
-    const matchAction = textBlock.match(regex);
-    console.log(textBlock);
+    const matchAction = this.findMatchInDocument(document, position, regex);
     if (!matchAction) {
       return null;
     }
-    const functionBlock = matchAction[0];
+    const functionBlock = matchAction;
     const actionNameMatch = this.extractActionName(functionBlock);
 
     if (!actionNameMatch) {
