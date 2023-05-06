@@ -84,9 +84,7 @@ class ActionCompletionProvider
     existingArgs: string[],
     isLineBreakRequired = false
   ) {
-    const actionElement = actions_list.find(
-      (element) => element.action_name === actionName
-    );
+    const actionElement = this.findActionByName(actionName);
 
     if (!actionElement) {
       return null;
@@ -231,15 +229,7 @@ class ActionCompletionProvider
     arg.filterText = defaultValues.value;
     return arg;
   }
-  parseMultilineArgs(functionBlock: string) {
-    const argPattern = /(\w+)\s*:/g;
-    let match;
-    const args = [];
-    while ((match = argPattern.exec(functionBlock)) !== null) {
-      args.push(match[1]);
-    }
-    return args;
-  }
+
   parseArgs(linePrefix: string) {
     const argPattern = /(\w+):/g;
     let match;

@@ -1,3 +1,4 @@
+import { ActionListType, actions_list } from '@/shared/src/config';
 import { ExtensionContext, Range, TextDocument } from "vscode";
 
 class Provider {
@@ -18,7 +19,26 @@ class Provider {
       /^\s*[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|%w\[[^\]]*\]|\S+)\s*,\s*)+)\s*\)$/gm;
     return text.match(regex);
   }
+  protected findActionByName(actionName:string): ActionListType | null{
+    const actionElement = actions_list.find(
+      (element) => element.action_name === actionName
+    );
 
+    if (!actionElement) {
+      return null;
+    }
+    return actionElement;
+
+  }
+  protected parseMultilineArgs(functionBlock: string) {
+    const argPattern = /(\w+)\s*:/g;
+    let match;
+    const args = [];
+    while ((match = argPattern.exec(functionBlock)) !== null) {
+      args.push(match[1]);
+    }
+    return args;
+  }
   public registerProvider(context: ExtensionContext) {
     // Nothing to do
   }
