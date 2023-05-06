@@ -11,18 +11,15 @@ class Provider {
     // there is one more line than there are line breaks.
     return matches ? matches.length + 1 : 1;
   }
-  protected matchMultilineInput(
-    document: TextDocument,
-    range: Range,
-    actionName: string
-  ) {
-    const regexConfig = {
-      regex: `\\b${actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
-      flags: "gm",
-    };
-    const regex = new RegExp(regexConfig.regex, regexConfig.flags);
-    return document.getText(range).match(regex);
+  protected matchMultilineSyntax(document: TextDocument, range: Range) {
+    const text = document.getText(range);
+    console.log(text);
+    const regex =
+      // eslint-disable-next-line no-useless-escape
+      /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|%w\[[^\]]*\]|\S+)\s*,\s*)+)\s*\)$/;
+    return text.match(regex);
   }
+
   public registerProvider(context: ExtensionContext) {
     // Nothing to do
   }

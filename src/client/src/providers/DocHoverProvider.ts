@@ -61,8 +61,8 @@ class DocHoverProvider extends Provider implements HoverProvider {
     position: Position,
     _token: CancellationToken
   ) {
-    const currentLine = document.lineAt(position.line).text;
-    console.log({currentLine});
+    // const currentLine = document.lineAt(position.line).text;
+    // console.log({currentLine});
     return null;
   }
 }

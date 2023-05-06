@@ -58,10 +58,9 @@ class ActionCompletionProvider
     const endingLine = document.lineCount;
     const range = new Range(startingLine, 0, endingLine, 0);
 
-    const matchMultilineInput = this.matchMultilineInput(
+    const matchMultilineInput = this.matchMultilineSyntax(
       document,
       range,
-      this.actionName
     );
 
     if (!matchMultilineInput) {
@@ -69,9 +68,6 @@ class ActionCompletionProvider
     }
 
     const functionBlock = matchMultilineInput[0];
-    if (!this.checkActionSyntax(functionBlock)) {
-      return null;
-    }
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
 
