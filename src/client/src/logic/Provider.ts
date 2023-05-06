@@ -13,7 +13,6 @@ class Provider {
   }
   protected matchMultilineSyntax(document: TextDocument, range: Range) {
     const text = document.getText(range);
-    console.log(text);
     const regex =
       // eslint-disable-next-line no-useless-escape
       /^\s*[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|%w\[[^\]]*\]|\S+)\s*,\s*)+)\s*\)$/gm;
