@@ -16,7 +16,7 @@ class Provider {
     console.log(text);
     const regex =
       // eslint-disable-next-line no-useless-escape
-      /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|%w\[[^\]]*\]|\S+)\s*,\s*)+)\s*\)$/;
+      /^\s*[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|%w\[[^\]]*\]|\S+)\s*,\s*)+)\s*\)$/gm;
     return text.match(regex);
   }
 
