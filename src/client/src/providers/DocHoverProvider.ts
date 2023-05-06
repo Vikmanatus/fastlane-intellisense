@@ -56,32 +56,36 @@ class DocHoverProvider extends Provider implements HoverProvider {
     markdownString.isTrusted = true;
     return markdownString;
   }
-  private extractActionName(functionBlock:string){
+  private extractActionName(functionBlock: string) {
     const matchActionName = functionBlock.match(/^\s*([a-z_]+)/i);
-    if(!matchActionName){
+    if (!matchActionName) {
       return null;
     }
     return matchActionName[1];
   }
-  private findMatchInDocument(document: TextDocument, position: Position, regex: RegExp): string | null {
+  private findMatchInDocument(
+    document: TextDocument,
+    position: Position,
+    regex: RegExp
+  ): string | null {
     let startingLine = position.line;
     const endingLine = document.lineCount;
     let functionBlock = null;
-  
+
     while (startingLine >= 0) {
       const documentRange = new Range(startingLine, 0, endingLine, 0);
       const textBlock = document.getText(documentRange);
       console.log(textBlock);
       const matchAction = textBlock.match(regex);
-  
+
       if (matchAction) {
         functionBlock = matchAction[0];
         break;
       }
-  
+
       startingLine--;
     }
-  
+
     return functionBlock;
   }
   provideHover(
@@ -125,7 +129,9 @@ class DocHoverProvider extends Provider implements HoverProvider {
     // If we are here, it mean thaht the hovered word is matching one of the arguments of the action, so we can safely display the doc
     const arg = this.argMap.get(word);
     if (arg && arg.description) {
-      const contents = new MarkdownString(arg.description);
+      const contents = new MarkdownString(
+        arg.description + "\n\n" + "Action name: " + "`" + actionNameMatch + "`"
+      );
       return {
         contents: [contents],
         range,
