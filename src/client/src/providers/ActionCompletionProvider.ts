@@ -42,13 +42,6 @@ class ActionCompletionProvider
       )
     );
   }
-  private checkActionSyntax(actionBlock: string) {
-    const syntaxValidationRegex =
-      // eslint-disable-next-line no-useless-escape
-      /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
-
-    return syntaxValidationRegex.test(actionBlock);
-  }
   private multilineSearch(
     document: TextDocument,
     position: Position,
