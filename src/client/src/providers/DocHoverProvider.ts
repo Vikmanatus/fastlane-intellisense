@@ -56,6 +56,13 @@ class DocHoverProvider extends Provider implements HoverProvider {
     markdownString.isTrusted = true;
     return markdownString;
   }
+  private extractActionName(functionBlock:string){
+    const matchActionName = functionBlock.match(/^\s*([a-z_]+)/i);
+    if(!matchActionName){
+      return null;
+    }
+    return matchActionName[1];
+  }
   provideHover(
     document: TextDocument,
     position: Position,
@@ -66,21 +73,21 @@ class DocHoverProvider extends Provider implements HoverProvider {
     const endingLine = document.lineCount;
     const documentRange = new Range(startingLine, 0, endingLine, 0);
     const regex = /[a-z_]+\s*\(\s*([^)]*)\s*\)$/m;
-    const matchAction = document.getText(documentRange).match(regex);
-
+    const textBlock = document.getText(documentRange);
+    const matchAction = textBlock.match(regex);
+    console.log(textBlock);
     if (!matchAction) {
       return null;
     }
     const functionBlock = matchAction[0];
-    const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
-    const actionName = actionNameMatch ? actionNameMatch[1] : null;
+    const actionNameMatch = this.extractActionName(functionBlock);
 
-    if (!actionName) {
+    if (!actionNameMatch) {
       return null;
     }
     const range = document.getWordRangeAtPosition(position);
     const word = document.getText(range).trim();
-    const isHoveredActionName = word === actionName ? true : false;
+    const isHoveredActionName = word === actionNameMatch ? true : false;
     if (isHoveredActionName) {
       // If we managed to get here, it means that the hovered word is contained into a fastlane action block and corresponds to the action name
       const matchAction = this.actionMap.get(word);
