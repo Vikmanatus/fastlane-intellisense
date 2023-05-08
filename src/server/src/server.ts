@@ -160,7 +160,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // Redundancy checking: we'll match the .env files and the Fastlane actions argument to see if there is a redundancy
   // Paramters values type checking
   const text = textDocument.getText();
-  const invalidPattern = /[a-z_]+\s*\(\s*(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)\s*(?!\s*,\s*))+\s*\)/gm;
+  // Invalid regex
+  const invalidPattern = /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)(?:\s*,?\s*(?=\w+\s*:)|\s*(?=\))))+)\s*\)$/gm;
   let m: RegExpExecArray | null;
 
   let problems = 0;
