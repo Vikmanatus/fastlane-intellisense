@@ -28,6 +28,12 @@ For the moment, this extension contains the following features:
 
 ✅ Providing documentation when hovering on action's arguments if available
 
+![Alt Text](./assets/hover.gif)
+
+✅ Autocompletion for `fastlane` actions arguments
+
+![Alt Text](./assets/autocomplete.gif)
+
 
 `TODO`: Fix autocompletion items on server side
 
