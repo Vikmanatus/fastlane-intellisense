@@ -24,8 +24,6 @@ For the moment, this extension contains the following features:
 
 ![Alt Text](./assets/doc.gif)
 
-✅ Development and production bundles handled by `Webpack`
-
 ✅ Providing documentation when hovering on action's arguments if available
 
 ![Alt Text](./assets/hover.gif)
