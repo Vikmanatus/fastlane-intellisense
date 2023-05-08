@@ -189,13 +189,18 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         problems++;
         console.log(match);
         console.log(m);
+        const actionNameMatch = m[0].match(/^\s*([a-z_]+)/i);
+        if(!actionNameMatch || !actionNameMatch.length){
+          return;
+        }
+        const actionName = actionNameMatch[1];
         const diagnostic: Diagnostic = {
           severity: DiagnosticSeverity.Error,
           range: {
-            start: textDocument.positionAt(m.index),
-            end: textDocument.positionAt(m.index + m[1].length),
+            start: textDocument.positionAt(m.index + actionName.length),
+            end: textDocument.positionAt(m.index + actionName.length  + m[1].length),
           },
-          message: `${m[1]} : there seems to be a syntax issue`,
+          message: `${match[0]} : there seems to be a syntax issue`,
         };
         if (hasDiagnosticRelatedInformationCapability) {
           diagnostic.relatedInformation = [
