@@ -153,7 +153,12 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // In this simple example we get the settings for every validate run.
   const settings = await getDocumentSettings(textDocument.uri);
 
-  // The validator creates diagnostics for all uppercase words length 2 and more
+  // The validator creates diagnostics for all the following potential issues:
+  // Syntax checking: we will firstly check if every params except the last one are followed by a comma
+
+  // When this syntax check issue will be resolved, we'll try to implement:
+  // Redundancy checking: we'll match the .env files and the Fastlane actions argument to see if there is a redundancy
+  // Paramters values type checking
   const text = textDocument.getText();
   const pattern = /\b[A-Z]{2,}\b/g;
   let m: RegExpExecArray | null;
