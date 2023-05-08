@@ -179,12 +179,19 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   while ((m = actionPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
     const invalidSyntaxRegex = /(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))(?:(?<!,)\s+(?!\s*,))(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))/gm;
     if(m.length > 1){
-      const  text = m[1];
+      let  text = m[1];
       let match;
       while ((match = invalidSyntaxRegex.exec(text)) !== null) {
       problems++;
         // Access the captured groups
-        console.log(match);
+        if (text.indexOf(match[1]) !== -1) {
+          text = text.replace(match[1], '');
+          console.log({text});
+          console.log(match);
+        }
+      
+        // Reset lastIndex to start searching from the beginning of the remaining text
+        invalidSyntaxRegex.lastIndex = 0;
       
         // Add any further processing you need for the matched key-value pairs
       }
