@@ -42,13 +42,6 @@ class ActionCompletionProvider
       )
     );
   }
-  private checkActionSyntax(actionBlock: string) {
-    const syntaxValidationRegex =
-      // eslint-disable-next-line no-useless-escape
-      /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
-
-    return syntaxValidationRegex.test(actionBlock);
-  }
   private multilineSearch(
     document: TextDocument,
     position: Position,
@@ -58,10 +51,9 @@ class ActionCompletionProvider
     const endingLine = document.lineCount;
     const range = new Range(startingLine, 0, endingLine, 0);
 
-    const matchMultilineInput = this.matchMultilineInput(
+    const matchMultilineInput = this.matchMultilineSyntax(
       document,
       range,
-      this.actionName
     );
 
     if (!matchMultilineInput) {
@@ -69,9 +61,6 @@ class ActionCompletionProvider
     }
 
     const functionBlock = matchMultilineInput[0];
-    if (!this.checkActionSyntax(functionBlock)) {
-      return null;
-    }
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
 
@@ -95,9 +84,7 @@ class ActionCompletionProvider
     existingArgs: string[],
     isLineBreakRequired = false
   ) {
-    const actionElement = actions_list.find(
-      (element) => element.action_name === actionName
-    );
+    const actionElement = this.findActionByName(actionName);
 
     if (!actionElement) {
       return null;
@@ -117,6 +104,7 @@ class ActionCompletionProvider
   }
   private singleLineSearch(searchItem: string) {
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
+
     const match = searchItem.match(matchAction);
 
     if (!match) {
@@ -241,15 +229,7 @@ class ActionCompletionProvider
     arg.filterText = defaultValues.value;
     return arg;
   }
-  parseMultilineArgs(functionBlock: string) {
-    const argPattern = /(\w+)\s*:/g;
-    let match;
-    const args = [];
-    while ((match = argPattern.exec(functionBlock)) !== null) {
-      args.push(match[1]);
-    }
-    return args;
-  }
+
   parseArgs(linePrefix: string) {
     const argPattern = /(\w+):/g;
     let match;

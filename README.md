@@ -31,7 +31,6 @@ For the moment, this extension contains the following features:
 
 `TODO`: Fix autocompletion items on server side
 
-`TODO`: Sometimes when hovering documentation, some arguments values can have the same name as some actions. Fix required.
 
 ## 📉 Regression
 
