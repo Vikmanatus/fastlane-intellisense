@@ -15,8 +15,7 @@ import {
   createConnection,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { actions_list } from '@/shared/src/config'; 
-
+import { actions_list } from "@/shared/src/config";
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -160,62 +159,69 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // Redundancy checking: we'll match the .env files and the Fastlane actions argument to see if there is a redundancy
   // Paramters values type checking
   const text = textDocument.getText();
-/**
- * This regex will extract all the actions and isolate the arguments, keys and values
- * Ex:
- * slack(param1: 'variable'  
- * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
- * Match[0]: slack(param1: 'variable'  
- * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
- * Match[1]:
- * param1: 'variable'  
- * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  
- */
-  const actionPattern = /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)(?:\s*,?\s*(?=\w+\s*:)|\s*(?=\))))+)\s*\)$/gm;
+  /**
+   * This regex will extract all the actions and isolate the arguments, keys and values
+   * Ex:
+   * slack(param1: 'variable'
+   * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
+   * Match[0]: slack(param1: 'variable'
+   * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
+   * Match[1]:
+   * param1: 'variable'
+   * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }
+   */
+  const actionPattern =
+    /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)(?:\s*,?\s*(?=\w+\s*:)|\s*(?=\))))+)\s*\)$/gm;
   let m: RegExpExecArray | null;
 
   let problems = 0;
   const diagnostics: Diagnostic[] = [];
-  while ((m = actionPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-    const invalidSyntaxRegex = /(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))(?:(?<!,)\s+(?!\s*,))(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))/gm;
-    if(m.length > 1){
-      let  text = m[1];
-      let match;
+  while (
+    (m = actionPattern.exec(text)) &&
+    problems < settings.maxNumberOfProblems
+  ) {
+    const invalidSyntaxRegex =
+      /(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))(?:(?<!,)\s+(?!\s*,))(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))/gm;
+    if (m.length > 1) {
+      const text = m[1];
+      let match: RegExpExecArray | null;
       while ((match = invalidSyntaxRegex.exec(text)) !== null) {
-      problems++;
-        // Access the captured groups
-        if (text.indexOf(match[1]) !== -1) {
-          text = text.replace(match[1], '');
-          console.log({text});
-          console.log(match);
+        problems++;
+        console.log(match);
+        console.log(m);
+        const diagnostic: Diagnostic = {
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: textDocument.positionAt(m.index),
+            end: textDocument.positionAt(m.index + m[1].length),
+          },
+          message: `${m[1]} : there seems to be a syntax issue`,
+        };
+        if (hasDiagnosticRelatedInformationCapability) {
+          diagnostic.relatedInformation = [
+            {
+              location: {
+                uri: textDocument.uri,
+                range: Object.assign({}, diagnostic.range),
+              },
+              message: "Invalid syntax issue",
+            },
+          ];
         }
-      
-        // Reset lastIndex to start searching from the beginning of the remaining text
-        invalidSyntaxRegex.lastIndex = 0;
-      
+        diagnostics.push(diagnostic);
+        // Access the captured groups
+        // if (text.indexOf(match[1]) !== -1) {
+        //   text = text.replace(match[1], '');
+        //   console.log({text});
+        //   console.log(match);
+        // }
+
+        // // Reset lastIndex to start searching from the beginning of the remaining text
+        // invalidSyntaxRegex.lastIndex = 0;
+
         // Add any further processing you need for the matched key-value pairs
       }
     }
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Error,
-      range: {
-        start: textDocument.positionAt(m.index),
-        end: textDocument.positionAt(m.index + m[0].length),
-      },
-      message: `${m[0]} : there seems to be a syntax issue`,
-    };
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: "Invalid syntax issue",
-        },
-      ];
-    }
-    diagnostics.push(diagnostic);
   }
 
   // Send the computed diagnostics to VSCode.
