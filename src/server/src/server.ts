@@ -160,21 +160,20 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // Redundancy checking: we'll match the .env files and the Fastlane actions argument to see if there is a redundancy
   // Paramters values type checking
   const text = textDocument.getText();
-  const pattern = /\b[A-Z]{2,}\b/g;
+  const invalidPattern = /[a-z_]+\s*\(\s*(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)\s*(?!\s*,\s*))+\s*\)/gm;
   let m: RegExpExecArray | null;
 
   let problems = 0;
   const diagnostics: Diagnostic[] = [];
-  while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+  while ((m = invalidPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
     problems++;
     const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
+      severity: DiagnosticSeverity.Error,
       range: {
         start: textDocument.positionAt(m.index),
         end: textDocument.positionAt(m.index + m[0].length),
       },
-      message: `${m[0]} is all uppercase.`,
-      source: "ex",
+      message: `${m[0]} : there seems to be a syntax issue`,
     };
     if (hasDiagnosticRelatedInformationCapability) {
       diagnostic.relatedInformation = [
@@ -183,14 +182,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
             uri: textDocument.uri,
             range: Object.assign({}, diagnostic.range),
           },
-          message: "Spelling matters",
-        },
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: "Particularly for names",
+          message: "Invalid syntax issue",
         },
       ];
     }
