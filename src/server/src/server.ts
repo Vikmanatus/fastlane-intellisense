@@ -189,6 +189,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         problems++;
         console.log(match);
         console.log(m);
+        console.log(problems);
         const actionNameMatch = m[0].match(/^\s*([a-z_]+)/i);
         if(!actionNameMatch || !actionNameMatch.length){
           return;
