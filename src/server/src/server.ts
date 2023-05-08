@@ -177,7 +177,18 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   let problems = 0;
   const diagnostics: Diagnostic[] = [];
   while ((m = actionPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-    problems++;
+    const invalidSyntaxRegex = /(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))(?:(?<!,)\s+(?!\s*,))(\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+))/gm;
+    if(m.length > 1){
+      const  text = m[1];
+      let match;
+      while ((match = invalidSyntaxRegex.exec(text)) !== null) {
+      problems++;
+        // Access the captured groups
+        console.log(match);
+      
+        // Add any further processing you need for the matched key-value pairs
+      }
+    }
     const diagnostic: Diagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {
