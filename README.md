@@ -24,14 +24,17 @@ For the moment, this extension contains the following features:
 
 ![Alt Text](./assets/doc.gif)
 
-✅ Development and production bundles handled by `Webpack`
-
 ✅ Providing documentation when hovering on action's arguments if available
+
+![Alt Text](./assets/hover.gif)
+
+✅ Autocompletion for `fastlane` actions arguments
+
+![Alt Text](./assets/autocomplete.gif)
 
 
 `TODO`: Fix autocompletion items on server side
 
-`TODO`: Sometimes when hovering documentation, some arguments values can have the same name as some actions. Fix required.
 
 ## 📉 Regression
 

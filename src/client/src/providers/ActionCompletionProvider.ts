@@ -35,42 +35,32 @@ class ActionCompletionProvider
   }
   public registerProvider(context: ExtensionContext): void {
     context.subscriptions.push(
-      languages.registerCompletionItemProvider("ruby", this, ...["(", ",", "\n"])
+      languages.registerCompletionItemProvider(
+        "ruby",
+        this,
+        ...["(", ",", "\n"]
+      )
     );
   }
-  private multilineSearch(document: TextDocument, position: Position, context: CompletionContext) {
-    const regex = new RegExp(
-      `\\b${this.actionName}\\s*\\(\\s*([\\s\\S]*?)\\)`,
-      "gm"
+  private multilineSearch(
+    document: TextDocument,
+    position: Position,
+    context: CompletionContext
+  ) {
+    const startingLine = position.line - this.multilineBlockLength;
+    const endingLine = document.lineCount;
+    const range = new Range(startingLine, 0, endingLine, 0);
+
+    const matchMultilineInput = this.matchMultilineSyntax(
+      document,
+      range,
     );
-    //Math.max(0, position.line - 1)
-    // TODO: fix to do - Issue with text range
-    // eslint-disable-next-line no-useless-escape
-    const syntaxValidationRegex = /(?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|%w\[[^\]]*\]|"[^"]*"|'[^']*'|\S+)\s*,\s*)+\)/;
 
-
-    const matchMulti = document
-      .getText(
-        new Range(
-          position.line - this.multilineBlockLength,
-          0,
-          document.lineCount,
-          0
-        )
-      )
-      .match(regex);
-
-    if (!matchMulti) {
+    if (!matchMultilineInput) {
       return null;
     }
 
-    const functionBlock = matchMulti[0];
-    if (!syntaxValidationRegex.test(functionBlock)) {
-      console.warn("Invalid syntax");
-      console.warn({ functionBlock });
-      return null;
-    }
-
+    const functionBlock = matchMultilineInput[0];
     const actionNameMatch = functionBlock.match(/^\s*([a-z_]+)/i);
     const actionName = actionNameMatch ? actionNameMatch[1] : null;
 
@@ -79,40 +69,42 @@ class ActionCompletionProvider
     }
 
     const multilineArgs = this.parseMultilineArgs(functionBlock);
+    // TODO: fix to do - Issue with text range
+    this.multilineBlockLength = this.getBlockHeight(functionBlock);
+    const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
 
-    const blockHeight = this.getBlockHeight(functionBlock);
-    this.multilineBlockLength = blockHeight;
-
-    const actionElement = actions_list.filter(
-      (element) => element.action_name === actionName
+    return this.getCompletionItems(
+      actionName,
+      multilineArgs,
+      isLineBreakRequired
     );
-    if (!actionElement.length) {
+  }
+  private getCompletionItems(
+    actionName: string,
+    existingArgs: string[],
+    isLineBreakRequired = false
+  ) {
+    const actionElement = this.findActionByName(actionName);
+
+    if (!actionElement) {
       return null;
     }
 
-    const actionArgs = actionElement[0].args;
+    const actionArgs = actionElement.args;
     if (!actionArgs) {
       return null;
     }
     const remainingArgs = actionArgs.filter(
-      (arg) => !multilineArgs.includes(arg.key)
+      (arg) => !existingArgs.includes(arg.key)
     );
-
-    const isLineBreakRequired = context.triggerCharacter === "," ? true : false;
     const completionItems = remainingArgs.map((arg) =>
-      this.generateArgument(arg,isLineBreakRequired)
+      this.generateArgument(arg, isLineBreakRequired)
     );
     return completionItems;
   }
-  private getBlockHeight(block: string): number {
-    const matches = block.match(/\n/g);
-    // If there are no matches, it means that the block is a single line,
-    // so we return 1. Otherwise, we add 1 to the number of matches because
-    // there is one more line than there are line breaks.
-    return matches ? matches.length + 1 : 1;
-  }
   private singleLineSearch(searchItem: string) {
     const matchAction = /[a-z_]+\s*\(\s*([^)]*)$/;
+
     const match = searchItem.match(matchAction);
 
     if (!match) {
@@ -130,26 +122,9 @@ class ActionCompletionProvider
     }
     const extractedActionName = matchActionName[1];
     this.actionName = extractedActionName;
-    const actionElement = actions_list.filter(
-      (element) => element.action_name === extractedActionName
-    );
-    if (!actionElement.length) {
-      return null;
-    }
-    const actionArgs = actionElement[0].args;
-    if (!actionArgs) {
-      return null;
-    }
-    const remainingArgs = actionArgs.filter(
-      (arg) => !existingArgs.includes(arg.key)
-    );
-
-    const completionItems = remainingArgs.map((arg) =>
-      this.generateArgument(arg)
-    );
 
     this.multilineBlockLength = existingArgs.length;
-    return completionItems;
+    return this.getCompletionItems(extractedActionName, existingArgs);
   }
   provideCompletionItems(
     document: TextDocument,
@@ -162,14 +137,14 @@ class ActionCompletionProvider
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
-      let completionItems = this.singleLineSearch(linePrefix);
+    let completionItems = this.singleLineSearch(linePrefix);
 
-      if (!completionItems) {
-        completionItems = this.multilineSearch(document, position, context);
-      }
-    
-      // Ensure that we always return an array
-      return completionItems ?? [];
+    if (!completionItems) {
+      completionItems = this.multilineSearch(document, position, context);
+    }
+
+    // Ensure that we always return an array
+    return completionItems ?? [];
   }
   private isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
@@ -180,9 +155,13 @@ class ActionCompletionProvider
       .join(", ");
     return `${configItem.key}: { ${entries} }`;
   }
-  private handleConfigDefaultValue(configItem: FastlaneConfigType, lineBreakRequired = false) {
-    const lineBreak = lineBreakRequired ? '\n' : '';
-    let defaultValue = lineBreak + configItem.key + ': ${1:"your_' + configItem.key + '"}';
+  private handleConfigDefaultValue(
+    configItem: FastlaneConfigType,
+    lineBreakRequired = false
+  ) {
+    const lineBreak = lineBreakRequired ? "\n" : "";
+    let defaultValue =
+      lineBreak + configItem.key + ': ${1:"your_' + configItem.key + '"}';
 
     switch (configItem.data_type) {
       case "String":
@@ -197,14 +176,22 @@ class ActionCompletionProvider
             break;
           }
           defaultValue =
-          lineBreak + configItem.key + ': ${1:"' + configItem.default_value + '"}';
+            lineBreak +
+            configItem.key +
+            ': ${1:"' +
+            configItem.default_value +
+            '"}';
         }
         break;
       case "Fastlane::Boolean":
       case "Integer":
         if (typeof configItem.default_value !== "undefined") {
           defaultValue =
-          lineBreak + configItem.key + ": ${1:" + configItem.default_value + "}";
+            lineBreak +
+            configItem.key +
+            ": ${1:" +
+            configItem.default_value +
+            "}";
         }
         break;
       case "Array":
@@ -212,7 +199,8 @@ class ActionCompletionProvider
           const defaultValueArray = configItem.default_value
             .map((value: string) => `"${value}"`)
             .join(", ");
-          defaultValue = lineBreak + configItem.key + ": ${1:[" + defaultValueArray + "]}";
+          defaultValue =
+            lineBreak + configItem.key + ": ${1:[" + defaultValueArray + "]}";
           break;
         }
         defaultValue = lineBreak + configItem.key + ": ${1:[]}";
@@ -220,11 +208,17 @@ class ActionCompletionProvider
     }
     return new SnippetString(defaultValue);
   }
-  generateArgument(fastalneArg: FastlaneConfigType, lineBreakRequired = false): CompletionItem {
+  generateArgument(
+    fastalneArg: FastlaneConfigType,
+    lineBreakRequired = false
+  ): CompletionItem {
     // Issue with fastalneArg.data_type "String" when string template "your_value" is displayed the linebreak is not triggered
     const argName = fastalneArg.key;
     const arg = new CompletionItem(argName, CompletionItemKind.Property);
-    const defaultValues = this.handleConfigDefaultValue(fastalneArg, lineBreakRequired);
+    const defaultValues = this.handleConfigDefaultValue(
+      fastalneArg,
+      lineBreakRequired
+    );
     arg.insertText = defaultValues;
     if (fastalneArg.description) {
       arg.documentation = new MarkdownString(fastalneArg.description);
@@ -235,15 +229,7 @@ class ActionCompletionProvider
     arg.filterText = defaultValues.value;
     return arg;
   }
-  parseMultilineArgs(functionBlock: string) {
-    const argPattern = /(\w+)\s*:/g;
-    let match;
-    const args = [];
-    while ((match = argPattern.exec(functionBlock)) !== null) {
-      args.push(match[1]);
-    }
-    return args;
-  }
+
   parseArgs(linePrefix: string) {
     const argPattern = /(\w+):/g;
     let match;
