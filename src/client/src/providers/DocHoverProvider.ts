@@ -75,11 +75,9 @@ class DocHoverProvider extends Provider implements HoverProvider {
     while (startingLine >= 0) {
       const documentRange = new Range(startingLine, 0, endingLine, 0);
       const textBlock = document.getText(documentRange);
-      console.log(textBlock);
       const matchAction = textBlock.match(regex);
 
       if (matchAction) {
-        console.log("found match");
         functionBlock = matchAction[0];
         break;
       }
@@ -121,7 +119,7 @@ class DocHoverProvider extends Provider implements HoverProvider {
     }
     // Need to check if the hovered word corresponds to the match
     const multilineArgs = this.parseMultilineArgs(functionBlock);
-    console.log({multilineArgs});
+
     const matchArg = multilineArgs.filter((element) => element === word);
     if (matchArg.length < 1) {
       return null;
