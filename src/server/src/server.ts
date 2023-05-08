@@ -160,13 +160,23 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // Redundancy checking: we'll match the .env files and the Fastlane actions argument to see if there is a redundancy
   // Paramters values type checking
   const text = textDocument.getText();
-  // Invalid regex
-  const invalidPattern = /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)(?:\s*,?\s*(?=\w+\s*:)|\s*(?=\))))+)\s*\)$/gm;
+/**
+ * This regex will extract all the actions and isolate the arguments, keys and values
+ * Ex:
+ * slack(param1: 'variable'  
+ * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
+ * Match[0]: slack(param1: 'variable'  
+ * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  )
+ * Match[1]:
+ * param1: 'variable'  
+ * param2: ['string', 'string', 2]  , param3: { 'key' => 'value' }  
+ */
+  const actionPattern = /[a-z_]+\s*\(\s*((?:\w+\s*:\s*(?:\[[^\]]*\]|\{[^\}]*\}|"[^"]*"|'[^']*'|\S+)(?:\s*,?\s*(?=\w+\s*:)|\s*(?=\))))+)\s*\)$/gm;
   let m: RegExpExecArray | null;
 
   let problems = 0;
   const diagnostics: Diagnostic[] = [];
-  while ((m = invalidPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+  while ((m = actionPattern.exec(text)) && problems < settings.maxNumberOfProblems) {
     problems++;
     const diagnostic: Diagnostic = {
       severity: DiagnosticSeverity.Error,
