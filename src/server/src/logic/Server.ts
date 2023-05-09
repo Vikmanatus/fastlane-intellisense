@@ -27,6 +27,7 @@ class Server extends ServerHelper {
   public hasDiagnosticRelatedInformationCapability: boolean | null;
   public documents: TextDocuments<TextDocument> | null;
   public globalSettings: ExampleSettings | null;
+  public documentSettings: Map<string, Thenable<ExampleSettings>> | null;
 
   constructor() {
     super();
@@ -36,12 +37,14 @@ class Server extends ServerHelper {
     this.hasDiagnosticRelatedInformationCapability = null;
     this.documents = null;
     this.globalSettings = null;
+    this.documentSettings = null;
   }
 
   public init(): boolean {
     this.connection = createConnection(ProposedFeatures.all);
     this.documents = new TextDocuments(TextDocument);
     this.globalSettings = { maxNumberOfProblems: 1000 };
+    this.documentSettings =  new Map();
     return true;
   }
 }
