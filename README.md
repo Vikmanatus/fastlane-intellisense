@@ -32,6 +32,9 @@ For the moment, this extension contains the following features:
 
 ![Alt Text](./assets/autocomplete.gif)
 
+📝 Syntax checking in progress
+
+![Alt Text](./assets/syntax.gif)
 
 `TODO`: Fix autocompletion items on server side
 
